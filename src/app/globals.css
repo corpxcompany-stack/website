@@ -1,18 +1,20 @@
 /* ==========================================================================
-   FONT IMPORTS (Required so the browser downloads Poppins & Plus Jakarta Sans)
-   ========================================================================== */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap');
-
-/* ==========================================================================
    TAILWIND v4 CORE & THEME CONFIGURATION
+
+   NOTE: the @import url('https://fonts.googleapis.com/...') line has been
+   REMOVED. next/font/google in layout.tsx already self-hosts both families.
+   Keeping both meant every visitor downloaded the fonts twice and paid for a
+   render-blocking request to fonts.googleapis.com.
    ========================================================================== */
 @import "tailwindcss";
 @import "./motion.css";
 
-/* Registers fonts as utility classes (e.g., class="font-heading") in Tailwind v4 */
+/* next/font injects --font-heading-sans and --font-body-sans onto <html>.
+   We map them into Tailwind's theme here so `font-heading` / `font-body`
+   utilities work, with no duplicate declarations fighting in the cascade. */
 @theme {
-  --font-heading: 'Poppins', 'Plus Jakarta Sans', system-ui, sans-serif;
-  --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-heading: var(--font-heading-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-body-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
 /* ==========================================================================
@@ -25,35 +27,42 @@
     --brand-black: 10 10 10;     /* #0a0a0a */
     --brand-white: 255 255 255;  /* #ffffff */
     --brand-canvas: 248 250 252; /* #f8fafc */
-    
-    /* Geometric Modern Typography Stack (Poppins Style) */
-    --font-heading: 'Poppins', 'Plus Jakarta Sans', system-ui, sans-serif;
-    --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
   }
 
   body {
     background-color: rgb(var(--brand-white));
     color: rgb(var(--brand-black));
     font-family: var(--font-body);
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
+    text-rendering: optimizeLegibility;
   }
 
   h1, h2, h3, h4 {
     font-family: var(--font-heading);
     color: rgb(var(--brand-black));
-    letter-spacing: -0.02em; /* Adjusted from -0.03em so circular characters breathe */
-    font-weight: 700;        /* Bold weight complements Poppins' geometric structure */
+    letter-spacing: -0.021em;
+    font-weight: 600;
   }
 
-  h1 { @apply text-4xl md:text-5xl lg:text-6xl leading-[1.1]; }
-  h2 { @apply text-3xl md:text-4xl leading-[1.2] tracking-tight; }
+  h1 { @apply text-4xl md:text-5xl lg:text-6xl leading-[1.08]; }
+  h2 { @apply text-3xl md:text-4xl leading-[1.16]; }
   h3 { @apply text-xl md:text-2xl leading-[1.3]; }
 
   p {
     font-family: var(--font-body);
     @apply text-base leading-relaxed tracking-normal text-gray-600;
+  }
+
+  /* Accessibility floor: respect the OS "reduce motion" setting. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
@@ -61,7 +70,7 @@
   .section-padding {
     @apply py-20 md:py-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto;
   }
-  
+
   /* Primary Conversion Button */
   .btn-primary-blue {
     font-family: var(--font-body);
@@ -70,22 +79,19 @@
            hover:bg-[#005bc4] hover:shadow-lg hover:shadow-blue-600/10 active:scale-[0.99];
   }
 
-  /* FIXED: Hyper-Targeted Conversion Trigger using Orange (#fe4d01) */
+  /* Hyper-Targeted Conversion Trigger using Orange (#fe4d01) */
   .btn-urgent-orange {
     font-family: var(--font-body);
     @apply inline-flex items-center justify-center font-bold text-sm tracking-wide
            bg-[#fe4d01] text-white px-8 py-4 rounded-xs;
-    
-    /* Native CSS implementation avoids breaking the Tailwind v4 @apply parser */
+
     transition: var(--transition-bounce);
     position: relative;
   }
-
   .btn-urgent-orange:hover {
     transform: translateY(-2px) scale(1.02);
     box-shadow: 0 12px 24px -10px rgba(254, 77, 1, 0.35);
   }
-
   .btn-urgent-orange:active {
     transform: translateY(0px) scale(0.98);
   }
@@ -97,6 +103,14 @@
            border border-black/10 bg-transparent text-black px-8 py-4 rounded-xs
            transition-all duration-300 hover:bg-black/5 hover:border-black/30;
   }
+}
+
+/* Visible keyboard focus — currently every interactive element uses
+   focus:outline-none with no replacement, which is a WCAG failure. */
+:where(a, button, input, select, textarea):focus-visible {
+  outline: 2px solid #006fe3;
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 
 ::selection {

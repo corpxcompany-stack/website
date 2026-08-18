@@ -1,74 +1,156 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
-import { Sparkles } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import "./HeroSection.css";
 
+/* ---------------------------------------------------------------------------
+   THE DIFFERENCE BAND — sits directly under the hero carousel
+
+   WHY IT LOOKS PLANNED NOW
+   It opens on the exact dark the hero closes on (#060c14) so there is no seam,
+   and it ends by fading to white, which is the hand-off into StatsSection. The
+   section is a bridge between two palettes — that is its structural job, and
+   the gradient is doing real work instead of decoration.
+
+   WHAT IT SAYS
+   The hero already made the claim. Repeating "deep cleaning since 2016" one
+   screen later is why it read as filler. This section proves the claim
+   instead: a depth scale running from Surface to Deep, with the four places
+   ordinary cleaning stops and CorpX does not.
+
+   THE SIGNATURE
+   The vertical rail. It is not decoration — it is the argument. It starts
+   thin and pale at "Surface" and thickens into brand orange at "Deep", so the
+   page states the point before anyone reads a word. Order carries meaning
+   here, which is why the rows are ranked rather than numbered.
+
+   NO VIDEO
+   The previous version streamed two YouTube embeds. Removed: ~900KB of
+   third-party script, unreliable mobile autoplay, YouTube's own branding on
+   the page, and footage of interiors that are not CorpX's work.
+
+   Height is content-driven, not 100vh. Two full-screen sections back to back
+   is what made this feel bolted on.
+--------------------------------------------------------------------------- */
+
+const layers = [
+  {
+    title: "Behind and under what doesn't move",
+    note: "Fridges, wardrobes, beds, washing machines — pulled out, cleaned behind, put back.",
+  },
+  {
+    title: "Kitchen chimney, hob and platform",
+    note: "Degreasing the surfaces that hold months of cooking oil, not just wiping them.",
+  },
+  {
+    title: "Sofa and mattress cores",
+    note: "Wet extraction pulls dust and residue out of the foam instead of moving it around.",
+  },
+  {
+    title: "Grout, hard water scaling, wall surfaces",
+    note: "Bathroom joints and tap fittings descaled. Wall cleaning on washable paints only.",
+  },
+];
+
+const reveal = {
+  hidden: { opacity: 0, y: 24 },
+  show: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, delay: i * 0.09, ease: [0.16, 1, 0.3, 1] as const },
+  }),
+};
+
 export default function HeroSection() {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  // Curated premium interior/facility assets mapped directly via high-performance IDs
-  const desktopVideo = "77CuKfbUc2k";
-  const mobileVideo = "fz1YLkCfIYs";
-  const videoId = isMobile ? mobileVideo : desktopVideo;
-
   return (
-    <section className="video-stage-container">
-      
-      {/* High-Performance Streaming Video Core */}
-      <div className="absolute inset-0 w-full h-full select-none pointer-events-none">
-        <iframe
-          src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&modestbranding=1&playsinline=1`}
-          className="embedded-stream-canvas"
-          allow="autoplay; fullscreen"
-          title="Pristine Architectural Asset Stream Loop"
-          loading="lazy"
-        />
+    <section className="diff" aria-labelledby="diff-title">
+      <div className="diff-inner">
+
+        {/* ---------- STATEMENT ---------- */}
+        <div className="diff-head">
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true, amount: 0.6 }}
+            transition={{ duration: 0.5 }}
+            className="diff-eyebrow"
+          >
+            The difference
+          </motion.p>
+
+          <motion.h2
+            id="diff-title"
+            initial={{ opacity: 0, y: 26 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
+            className="diff-title"
+          >
+            Surface cleaning
+            <span>ends where ours starts.</span>
+          </motion.h2>
+
+          <motion.p
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ duration: 0.65, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
+            className="diff-sub"
+          >
+            A regular clean handles what you can see. A deep clean handles what
+            you can smell six months later. Four places the difference shows up.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ duration: 0.6, delay: 0.24 }}
+          >
+            <Link href="/services" className="diff-link">
+              See everything included
+              <ArrowUpRight size={15} />
+            </Link>
+          </motion.div>
+        </div>
+
+        {/* ---------- DEPTH SCALE ---------- */}
+        <div className="diff-scale">
+          <div className="diff-rail" aria-hidden="true">
+            <span className="diff-rail-cap">Surface</span>
+            <motion.span
+              initial={{ scaleY: 0 }}
+              whileInView={{ scaleY: 1 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+              className="diff-rail-line"
+            />
+            <span className="diff-rail-cap diff-rail-cap--deep">Deep</span>
+          </div>
+
+          <ul className="diff-list">
+            {layers.map((layer, i) => (
+              <motion.li
+                key={layer.title}
+                custom={i}
+                variants={reveal}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true, amount: 0.4 }}
+                className="diff-row"
+              >
+                <span className="diff-node" aria-hidden="true" />
+                <div className="diff-row-body">
+                  <h3 className="diff-row-title">{layer.title}</h3>
+                  <p className="diff-row-note">{layer.note}</p>
+                </div>
+              </motion.li>
+            ))}
+          </ul>
+        </div>
       </div>
-
-      {/* Luxury Tint, Blur, & Gradient Vignette Contrast Interface */}
-      <div className="premium-vignette-layer bg-black/20" />
-
-      {/* Typographic Content Layer */}
-      <div className="relative z-10 text-center px-6 max-w-4xl mx-auto h-full flex flex-col items-center justify-center space-y-6">
-        
-        {/* Headline Copy Content — Mapped straight from the verify document matrix */}
-        <motion.h2 
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false }}
-          transition={{ duration: 0.8, delay: 0.1 }}
-          className="font-heading font-bold text-white tracking-tight text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-[1.15]"
-        >
-          Deep Cleaning, Not Just Surface Cleaning. <br />
-          <span className="text-[#006fe3] font-normal italic font-heading">
-            We go where regular cleaning can't.
-          </span>
-        </motion.h2>
-        
-        {/* Localized Identity Sub-Signal */}
-        <motion.p 
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: false }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="text-xs sm:text-sm tracking-[0.22em] font-body font-bold text-white/80 uppercase flex items-center gap-2"
-        >
-          <Sparkles size={14} className="text-[#006fe3] shrink-0" />
-          Trusted Premium Results Since 2016
-        </motion.p>
-      </div>
-
-      {/* Clean Bottom Gradient Bridge to Smoothly Re-enter Light Layout Content */}
-      <div className="bottom-canvas-bridge" />
     </section>
   );
 }

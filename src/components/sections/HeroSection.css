@@ -1,54 +1,280 @@
 /* ==========================================================================
-   CINEMATIC STREAMING OVERLAY & VIDEO MASK PHYSICS
+   THE DIFFERENCE BAND — CorpX
+
+   PALETTE JOB
+   Opens on #060c14, the exact dark the hero carousel closes on, so the two
+   sections read as one continuous piece rather than two things stacked. Ends
+   on white, which is what the sections below expect. The section IS the
+   transition — that is why it belongs here and nowhere else on the page.
+
+   The old file had `rgba(10, 10, 10, 0.75) 100__` in a gradient, which is
+   invalid, so the browser dropped that entire background declaration. Worth
+   grepping the rest of the project for other stray characters like it.
    ========================================================================== */
 
-.video-stage-container {
+.diff {
   position: relative;
   width: 100%;
-  height: 100vh;
+  padding: clamp(4.5rem, 11vh, 8rem) clamp(1.25rem, 5vw, 4.5rem) clamp(4.5rem, 10vh, 7rem);
+  background: #060c14;
   overflow: hidden;
-  background-color: #0a0a0a;
 }
 
-/* Seamlessly cover the viewport while scaling past player chrome boundaries */
-.embedded-stream-canvas {
+/* Faint blue wash from the top-left, tying back to the brand blue used in
+   the hero. Sits under everything and never intercepts a click. */
+.diff::before {
+  content: "";
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 100vw;
-  height: 56.25vw; /* Absolute 16:9 Aspect ratio constraint */
-  min-height: 100vh;
-  min-width: 177.77vh; /* Structural scale safeguard */
-  transform: translate(-50%, -50%) scale(1.05);
+  top: -18%;
+  left: -10%;
+  width: 46rem;
+  height: 46rem;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(0, 111, 227, 0.16) 0%, transparent 68%);
   pointer-events: none;
 }
 
-/* High-Contrast Luxury Dark Scrim Overlay */
-.premium-vignette-layer {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to bottom, 
-    rgba(10, 10, 10, 0.3) 0%, 
-    rgba(10, 10, 10, 0.5) 50%, 
-    rgba(10, 10, 10, 0.75) 100__
-  );
-  backdrop-filter: blur(1px);
-  -webkit-backdrop-filter: blur(1px);
+.diff-inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(2.75rem, 6vw, 5.5rem);
+  max-width: 80rem;
+  margin: 0 auto;
 }
 
-/* Sleek Black Cinematic Fade to anchor the bottom edge of the frame */
-.bottom-canvas-bridge {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 180px;
+/* --------------------------------------------------------------------------
+   STATEMENT
+   -------------------------------------------------------------------------- */
+.diff-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #fe4d01;
+}
+.diff-eyebrow::before {
+  content: "";
+  width: 1.75rem;
+  height: 1px;
+  background: #fe4d01;
+}
+
+.diff-title {
+  margin-top: 1.5rem;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: clamp(2.1rem, 4.6vw, 3.75rem);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  color: #ffffff;
+  text-wrap: balance;
+}
+/* Second line in blue — same accent as the hero headline, so the two
+   headlines are visibly from the same system. */
+.diff-title span {
+  display: block;
+  color: #4da6ff;
+}
+
+.diff-sub {
+  margin-top: 1.35rem;
+  max-width: 30rem;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.diff-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.75rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #ffffff;
+  transition: border-color 250ms ease, color 250ms ease;
+}
+.diff-link:hover {
+  border-color: #fe4d01;
+  color: #fe4d01;
+}
+.diff-link svg {
+  transition: transform 250ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.diff-link:hover svg {
+  transform: translate(2px, -2px);
+}
+.diff-link:focus-visible {
+  outline: 2px solid #4da6ff;
+  outline-offset: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   DEPTH SCALE — the signature element
+
+   The rail is the argument, not an ornament: pale and thin at Surface,
+   solid brand orange at Deep. Anyone who scrolls past without reading still
+   receives the point.
+   -------------------------------------------------------------------------- */
+.diff-scale {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: clamp(1.5rem, 3vw, 2.75rem);
+}
+
+.diff-rail {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.25rem 0;
+}
+.diff-rail-line {
+  flex: 1;
+  width: 2px;
+  min-height: 8rem;
+  border-radius: 9999px;
+  transform-origin: top;
   background: linear-gradient(
-    to bottom, 
-    rgba(10, 10, 10, 0) 0%, 
-    rgba(10, 10, 10, 0.7) 60%, 
-    #0a0a0a 100%
+    to bottom,
+    rgba(255, 255, 255, 0.14) 0%,
+    rgba(0, 111, 227, 0.55) 45%,
+    #fe4d01 100%
   );
-  pointer-events: none;
+  will-change: transform;
+}
+.diff-rail-cap {
+  writing-mode: vertical-rl;
+  font-family: var(--font-body);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.35);
+  white-space: nowrap;
+}
+.diff-rail-cap--deep {
+  color: #fe4d01;
+}
+
+.diff-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.diff-row {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 1.1rem;
+  padding: clamp(1.25rem, 2.6vw, 1.85rem) 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+}
+.diff-row:first-child {
+  padding-top: 0;
+}
+.diff-row:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+/* Each node sits deeper on the scale — it inherits nothing, it is set per
+   row so the four dots trace the same gradient the rail does. */
+.diff-node {
+  flex-shrink: 0;
+  width: 9px;
+  height: 9px;
+  margin-top: 0.45rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.22);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.04);
+  transition: background-color 300ms ease, box-shadow 300ms ease;
+}
+.diff-row:nth-child(2) .diff-node {
+  background: rgba(0, 111, 227, 0.6);
+  box-shadow: 0 0 0 4px rgba(0, 111, 227, 0.1);
+}
+.diff-row:nth-child(3) .diff-node {
+  background: rgba(0, 111, 227, 0.9);
+  box-shadow: 0 0 0 4px rgba(0, 111, 227, 0.14);
+}
+.diff-row:nth-child(4) .diff-node {
+  background: #fe4d01;
+  box-shadow: 0 0 0 4px rgba(254, 77, 1, 0.16);
+}
+
+.diff-row-title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.05rem, 1.9vw, 1.35rem);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+}
+.diff-row-note {
+  margin-top: 0.4rem;
+  max-width: 34rem;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* --------------------------------------------------------------------------
+   NO FADE HERE
+   The hand-off to white now lives at the bottom of VideoSection, which sits
+   directly below this band. Both sections share #060c14, so they read as one
+   dark chapter that ends once, not twice.
+   -------------------------------------------------------------------------- */
+
+/* --------------------------------------------------------------------------
+   DESKTOP — statement left, scale right, statement holds while the rows pass
+   -------------------------------------------------------------------------- */
+@media (min-width: 1024px) {
+  .diff-inner {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    align-items: start;
+  }
+  .diff-head {
+    position: sticky;
+    /* Clears the navbar. --nav-h comes from globals.css, same as the hero. */
+    top: calc(var(--nav-h, 4.5rem) + 4rem);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   MOBILE
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .diff-rail-cap {
+    display: none;
+  }
+  .diff-rail-line {
+    min-height: 100%;
+  }
+  .diff-row {
+    gap: 0.9rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   REDUCED MOTION
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .diff-link svg {
+    transition: none;
+  }
 }

@@ -1,51 +1,538 @@
 /* ==========================================================================
-   HERO CAROUSEL VISUAL METRIC LAYERS & 3D PHYSICS
+   HERO CAROUSEL — CorpX
+
+   TWO NUMBERS TO SET, ONCE, IN globals.css
+   ----------------------------------------
+   1. --nav-h : your real navbar height.
+          :root { --nav-h: 4.5rem; }
+          @media (min-width: 1024px) { :root { --nav-h: 5.5rem; } }
+
+   2. --hero-h : how tall the hero box is.
+          Navbar OVERLAYS the hero (fixed / absolute, transparent over photo):
+              --hero-h: 100svh;                        ← default below
+          Navbar sits IN FLOW above the hero (pushes it down):
+              --hero-h: calc(100svh - var(--nav-h));
+
+   Get #2 wrong and you get either a scrollbar on load or a gap under the
+   fold. Check which one your Navbar component does before shipping.
+
+   WHY svh AND NOT vh
+   On mobile Chrome and Safari, 100vh is the height WITHOUT the browser
+   chrome, so a 100vh hero is taller than the visible screen and the CTA sits
+   below the fold until the address bar collapses. svh is the small viewport
+   height — always visible. This is the single most common full-screen hero
+   bug on Indian Android traffic, where Chrome mobile dominates.
+
+   CROP BEHAVIOUR
+   The photos are 16:9. A full-height stage is rarely 16:9, so the difference
+   is absorbed by object-fit: cover plus a per-slide focal point set in the
+   component. On mobile the hero does NOT crop — see the mobile block.
+
+   Only opacity and transform animate anywhere in this file.
    ========================================================================== */
 
-.hero-perspective-canvas {
-  perspective: 1400px;
-  transform-style: preserve-3d;
-  /* Ensure general text inside the 3D canvas defaults to the body font */
+.hero {
+  --nav-h: 4.5rem;
+  --hero-h: 100svh;
+  --edge: clamp(1.25rem, 5vw, 4.5rem);
+
+  position: relative;
+  width: 100%;
+  background: #060c14;
+  isolation: isolate;
+}
+
+/* --------------------------------------------------------------------------
+   STAGE
+   -------------------------------------------------------------------------- */
+.hero-stage {
+  position: relative;
+  width: 100%;
+  height: var(--hero-h);
+  /* Landscape phones and short laptop windows: stop the hero collapsing to a
+     letterbox slit. 30rem still shows the crew and both buttons. */
+  min-height: 30rem;
+  overflow: hidden;
+  background: linear-gradient(140deg, #006fe3 0%, #0a5fc0 45%, #060c14 100%);
+  touch-action: pan-y;
+}
+
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  will-change: opacity, transform;
+}
+.hero-img {
+  object-fit: cover;
+}
+
+/* Left-weighted so the copy has contrast without flattening the whole photo,
+   plus a bottom lift for the controls. */
+.hero-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    linear-gradient(100deg, rgba(4, 10, 18, 0.93) 0%, rgba(4, 10, 18, 0.72) 34%, rgba(4, 10, 18, 0.20) 66%, rgba(4, 10, 18, 0.06) 100%),
+    linear-gradient(to top, rgba(4, 10, 18, 0.62) 0%, transparent 40%);
+}
+
+/* --------------------------------------------------------------------------
+   SCROLL CUE — a full-height hero hides the fold, so say there is more
+   -------------------------------------------------------------------------- */
+.hero-cue {
+  position: absolute;
+  left: 50%;
+  bottom: 1.5rem;
+  z-index: 4;
+  display: block;
+  width: 1px;
+  height: 2.75rem;
+  overflow: hidden;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.2);
+}
+.hero-cue-line {
+  position: absolute;
+  inset: 0;
+  background: #ffffff;
+  animation: cueRun 2.4s cubic-bezier(0.7, 0, 0.3, 1) infinite;
+  will-change: transform;
+}
+@keyframes cueRun {
+  0%   { transform: translateY(-100%); }
+  55%  { transform: translateY(100%); }
+  100% { transform: translateY(100%); }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --------------------------------------------------------------------------
+   COPY
+   -------------------------------------------------------------------------- */
+.hero-copy-wrap {
+  position: relative;
+  z-index: 3;
+  padding: 2.25rem var(--edge) 2rem;
+  background: #060c14;
+}
+
+.hero-copy {
+  max-width: 34rem;
+}
+
+/* --------------------------------------------------------------------------
+   BRAND PLAQUE
+
+   The logo needs a white background. Rather than hiding that, the plaque
+   makes it the point: a solid white card with generous padding, a brand-blue
+   edge, and the trust line sharing the space. It reads as a stamp on the
+   work, not as a logo that failed to go transparent.
+
+   LOGO SIZING
+   The <Image> width/height in the component are intrinsic hints for Next —
+   replace 320x96 with your file's real pixel dimensions or the layout shifts
+   on first paint. Rendered size is controlled here, not there.
+   -------------------------------------------------------------------------- */
+.hero-brand {
+  display: inline-flex;
+  align-items: stretch;
+  gap: 1.15rem;
+  padding: 0.85rem 1.25rem 0.85rem 1.1rem;
+  border-radius: 0.65rem;
+  background: #ffffff;
+  /* Brand-blue left edge, so the plaque is CorpX's and not a generic card. */
+  box-shadow:
+    inset 4px 0 0 0 #006fe3,
+    0 18px 40px -22px rgba(0, 0, 0, 0.65);
+}
+.hero-brand-mark {
+  display: flex;
+  align-items: center;
+  padding-left: 0.25rem;
+}
+.hero-brand-img {
+  display: block;
+  height: 2.85rem;
+  width: auto;
+  /* If the source has any off-white fringing from the AVIF encode, this keeps
+     the edges reading as clean white against the card. */
+  background: #ffffff;
+}
+.hero-brand-rule {
+  width: 1px;
+  align-self: stretch;
+  background: rgba(15, 23, 42, 0.12);
+}
+.hero-brand-note {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.15rem;
   font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #0f172a;
+  white-space: nowrap;
 }
-
-/* Luxury Interactive Floating Frame Architecture */
-.parallax-glass-card {
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
-              box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-              filter 0.4s ease;
-  will-change: transform, box-shadow, filter;
-  transform-style: preserve-3d;
-  backface-visibility: hidden;
-}
-
-/* Custom Depth-Step Offsets for Individual Parallax Layers */
-.depth-tier-high { 
-  transform: translateZ(40px); 
-  /* Force Poppins on high-depth floating elements (like metric numbers or titles) */
-  font-family: var(--font-heading);
-  letter-spacing: -0.02em;
-}
-
-.depth-tier-mid { 
-  transform: translateZ(20px); 
-}
-
-/* Premium Video Masking Layer */
-.video-mask-canvas {
-  mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 75%, rgba(0,0,0,0) 100%);
-  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 75%, rgba(0,0,0,0) 100%);
-}
-
-/* Frosted Badge - Styled as a Punchy UI Label using Poppins */
-.frosted-pill-badge {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 111, 227, 0.08);
-  
-  /* Connected to globals.css Poppins styling */
-  font-family: var(--font-heading);
+.hero-brand-note span {
   font-weight: 600;
-  letter-spacing: -0.01em;
+  letter-spacing: 0.11em;
+  color: #64748b;
+}
+
+.hero-title {
+  margin-top: 1.4rem;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  /* Ties to viewport HEIGHT as well as width, so a short laptop window does
+     not get a headline that eats the buttons. */
+  font-size: clamp(2.5rem, min(5.6vw, 9.5svh), 4.75rem);
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+  color: #ffffff;
+}
+.hero-title-line {
+  display: block;
+}
+.hero-title em {
+  font-style: normal;
+  color: #4da6ff;
+}
+
+.hero-sub {
+  margin-top: 1rem;
+  max-width: 25rem;
+  font-family: var(--font-body);
+  font-size: 0.975rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.66);
+}
+
+.hero-price {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin-top: 1.3rem;
+  padding: 0.6rem 1.05rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.hero-price-label {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+.hero-price-value {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+}
+.hero-price-unit {
+  margin-left: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 1.5rem;
+}
+.hero-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.95rem 1.85rem;
+  border-radius: 0.25rem;
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transition: background-color 250ms ease, border-color 250ms ease;
+}
+.hero-btn--primary {
+  background: #fe4d01;
+  color: #ffffff;
+}
+.hero-btn--primary:hover {
+  background: #e04400;
+}
+.hero-btn--ghost {
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #ffffff;
+}
+.hero-btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 1.4rem;
+  margin-top: 1.3rem;
+}
+.hero-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  transition: color 250ms ease;
+}
+.hero-meta-item:hover {
+  color: #ffffff;
+}
+.hero-meta-item svg {
+  color: #4da6ff;
+  flex-shrink: 0;
+}
+
+/* --------------------------------------------------------------------------
+   CONTROLS
+   -------------------------------------------------------------------------- */
+.hero-controls {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 0 var(--edge) 1.75rem;
+  background: #060c14;
+}
+
+.hero-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.hero-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  transition: background-color 220ms ease, color 220ms ease, border-color 220ms ease;
+}
+.hero-arrow:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.42);
+  color: #ffffff;
+}
+.hero-arrow--toggle {
+  margin-left: 0.35rem;
+}
+.hero-arrow:focus-visible,
+.hero-bar:focus-visible {
+  outline: 2px solid #4da6ff;
+  outline-offset: 3px;
+}
+
+/* Bars, not dots — a bar can carry the autoplay countdown, a 7px dot can't. */
+.hero-bars {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0 0.5rem;
+}
+.hero-bar {
+  padding: 0.75rem 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.hero-bar-track {
+  display: block;
+  position: relative;
+  width: 1.1rem;
+  height: 2px;
+  overflow: hidden;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.25);
+  transition: width 400ms cubic-bezier(0.16, 1, 0.3, 1), background-color 300ms ease;
+}
+.hero-bar:hover .hero-bar-track {
+  background: rgba(255, 255, 255, 0.5);
+}
+.hero-bar.is-active .hero-bar-track {
+  width: 2.75rem;
+  background: rgba(255, 255, 255, 0.28);
+}
+.hero-bar-fill {
+  position: absolute;
+  inset: 0;
+  transform-origin: left;
+  background: #fe4d01;
+  animation-name: barFill;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+  will-change: transform;
+}
+@keyframes barFill {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+/* --------------------------------------------------------------------------
+   DESKTOP — copy overlays the photo, controls sit inside the frame
+   -------------------------------------------------------------------------- */
+@media (min-width: 768px) {
+  .hero-copy-wrap {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    /* Top pad clears the navbar, bottom pad clears the controls row, so the
+       copy is optically centred in the space it actually owns. */
+    padding: var(--nav-h) var(--edge) 7rem;
+    background: none;
+    pointer-events: none;
+  }
+  /* Wrapper ignores clicks so the swipe area stays live; the copy takes them
+     back, or the buttons inside would be dead. */
+  .hero-copy {
+    pointer-events: auto;
+  }
+  .hero-controls {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: 0 var(--edge) 2.25rem;
+    background: none;
+  }
+}
+
+/* Short laptop windows (1366x768 and the like) — trim the vertical air so
+   nothing important lands under the fold. */
+@media (min-width: 768px) and (max-height: 760px) {
+  .hero-copy-wrap {
+    padding-bottom: 6rem;
+  }
+  .hero-sub {
+    display: none;
+  }
+  .hero-title {
+    margin-top: 1rem;
+  }
+  .hero-cue {
+    display: none;
+  }
+}
+
+@media (min-width: 1280px) {
+  .hero-brand-img {
+    height: 3.4rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   MOBILE — full screen height, WITHOUT cropping the photo
+
+   A 375x700 phone filled with a 16:9 image discards about 60% of the frame,
+   which for a crew photo means most of the crew. So the hero still fills the
+   screen, but it splits: the photo keeps its true 16:9 band at the top, and
+   the copy panel grows to take whatever height is left.
+   -------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  .hero {
+    display: flex;
+    flex-direction: column;
+    min-height: var(--hero-h);
+  }
+  .hero-stage {
+    order: 0;
+    flex: 0 0 auto;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    min-height: 0;
+  }
+  .hero-controls {
+    order: 1;
+    flex: 0 0 auto;
+    padding-top: 1.1rem;
+    padding-bottom: 0;
+  }
+  .hero-copy-wrap {
+    order: 2;
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    padding-top: 1.5rem;
+    padding-bottom: 2.5rem;
+  }
+  .hero-cue {
+    display: none;
+  }
+  .hero-arrow {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+  .hero-btn {
+    flex: 1 1 10rem;
+  }
+  .hero-title {
+    font-size: clamp(2.1rem, 10vw, 2.9rem);
+  }
+  .hero-scrim {
+    background: linear-gradient(to top, rgba(6, 12, 20, 0.85) 0%, rgba(6, 12, 20, 0.18) 45%, transparent 100%);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   REDUCED MOTION
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .hero-bar-fill,
+  .hero-cue-line {
+    animation: none;
+  }
+  .hero-cue {
+    display: none;
+  }
+  .hero-bar-track {
+    transition: none;
+  }
 }

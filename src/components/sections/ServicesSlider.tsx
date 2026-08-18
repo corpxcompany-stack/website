@@ -1,96 +1,183 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Sparkles, ArrowUpRight } from "lucide-react";
-// 1. Import centralized data helper
+import { ChevronLeft, ChevronRight, Sparkles, ArrowUpRight, MapPin, Pause, Play } from "lucide-react";
 import { getServicesByLocation, ServiceItem } from "@/data/servicesData";
 import "./ServicesSlider.css";
 
+/* CHANGE #11 — cities are called out explicitly, in the heading and as chips. */
+const CITIES = ["Pune", "Mumbai", "Bangalore", "Hyderabad"];
+
+/* CHANGE #12 — auto-advance interval, in ms. */
+const AUTOPLAY_MS = 4500;
+
 export default function ServicesSlider() {
-  // 2. Load all 13 services dynamically (defaults to Pune)
   const services: ServiceItem[] = getServicesByLocation("Pune");
 
   const [activeIndex, setActiveIndex] = useState(2);
   const [isMobile, setIsMobile] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
 
+  /* Responsive breakpoint — matchMedia is cheaper than a resize listener
+     because it only fires when the query result actually flips. */
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    const mq = window.matchMedia("(max-width: 767px)");
+    const apply = () => setIsMobile(mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
   }, []);
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     setActiveIndex((prev) => (prev + 1) % services.length);
-  };
+  }, [services.length]);
 
-  const handlePrev = () => {
+  const handlePrev = useCallback(() => {
     setActiveIndex((prev) => (prev - 1 + services.length) % services.length);
+  }, [services.length]);
+
+  /* Manual navigation pauses autoplay so the carousel never fights the user. */
+  const goNext = () => {
+    setIsPaused(true);
+    handleNext();
+  };
+  const goPrev = () => {
+    setIsPaused(true);
+    handlePrev();
   };
 
-  const navBtnClass = "w-12 h-12 rounded-full border border-neutral-200 bg-white text-neutral-800 flex items-center justify-center transition-all duration-300 shadow-sm hover:bg-[#006fe3] hover:text-white hover:border-[#006fe3] active:scale-95 cursor-pointer disabled:opacity-30";
+  /* ---------------------------------------------------------------------
+     CHANGE #12 — AUTOPLAY
+     Stops when: paused by hover/focus/manual input, the tab is hidden, the
+     section is off-screen, or the visitor has asked for reduced motion.
+     --------------------------------------------------------------------- */
+  useEffect(() => {
+    if (isPaused) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let inView = true;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        inView = entry.isIntersecting;
+      },
+      { threshold: 0.25 }
+    );
+    if (sectionRef.current) observer.observe(sectionRef.current);
+
+    const timer = window.setInterval(() => {
+      if (inView && !document.hidden) handleNext();
+    }, AUTOPLAY_MS);
+
+    return () => {
+      window.clearInterval(timer);
+      observer.disconnect();
+    };
+  }, [isPaused, handleNext]);
+
+  const navBtnClass =
+    "w-12 h-12 rounded-full border border-neutral-200 bg-white text-neutral-800 flex items-center justify-center transition-all duration-300 shadow-sm hover:bg-[#006fe3] hover:text-white hover:border-[#006fe3] active:scale-95 cursor-pointer disabled:opacity-30";
 
   return (
-    <section className="w-full py-20 md:py-28 bg-gradient-to-b from-neutral-50 via-white to-white overflow-hidden">
+    <section
+      ref={sectionRef}
+      className="w-full py-20 md:py-28 bg-gradient-to-b from-neutral-50 via-white to-white overflow-hidden"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      onFocusCapture={() => setIsPaused(true)}
+    >
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-        
-        {/* Component Header Block */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12">
-          <div className="space-y-4 max-w-3xl">
+
+        {/* ==========================================
+           HEADER — cities highlighted (CHANGE #11)
+           ========================================== */}
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
+          <div className="space-y-5 max-w-3xl">
             <div className="inline-flex items-center gap-2 bg-[#006fe3]/5 border border-[#006fe3]/10 text-[#006fe3] rounded-full px-4 py-1.5 text-xs font-bold tracking-wider uppercase font-body">
-              <Sparkles size={12} className="fill-current" />
-              Advanced Architectural Hygiene Showroom
+              <Sparkles size={12} />
+              What we clean
             </div>
-            <h2 className="font-heading font-extrabold text-neutral-900 text-3xl sm:text-4xl md:text-5xl leading-tight tracking-tight">
-              Professional Cleaning Services in Pune, Mumbai, Bangalore & Hyderabad
+
+            <h2 className="font-heading font-bold text-neutral-900 text-3xl sm:text-4xl md:text-5xl leading-tight tracking-tight">
+              Professional cleaning services in{" "}
+              <span className="text-[#006fe3]">Pune</span>,{" "}
+              <span className="text-[#006fe3]">Mumbai</span>,{" "}
+              <span className="text-[#006fe3]">Bangalore</span> &amp;{" "}
+              <span className="text-[#006fe3]">Hyderabad</span>
             </h2>
+
+            {/* City chips — reinforces coverage for local search and scanning */}
+            <ul className="flex flex-wrap items-center gap-2">
+              {CITIES.map((city) => (
+                <li
+                  key={city}
+                  className="inline-flex items-center gap-1.5 bg-white border border-[#006fe3]/20 text-neutral-800 rounded-full pl-2.5 pr-3.5 py-1.5 text-[11px] font-bold tracking-wide font-body shadow-2xs"
+                >
+                  <MapPin size={12} className="text-[#006fe3] shrink-0" />
+                  {city}
+                </li>
+              ))}
+            </ul>
+
             <p className="font-body text-sm sm:text-base text-neutral-600 font-medium max-w-xl leading-relaxed">
-              Explore our spatial cleaning matrix. Click on any block or use the navigational targets below to bring a solution into 3D focus.
+              Browse the full range below. Tap any card to bring it into focus,
+              or use the arrows.
             </p>
           </div>
 
-          {/* Desktop Controls */}
+          {/* Desktop controls */}
           <div className="hidden md:flex items-center gap-3">
-            <button type="button" onClick={handlePrev} className={navBtnClass} aria-label="Previous Service">
+            <button
+              type="button"
+              onClick={() => setIsPaused((p) => !p)}
+              className={navBtnClass}
+              aria-label={isPaused ? "Resume auto-scroll" : "Pause auto-scroll"}
+            >
+              {isPaused ? <Play size={18} /> : <Pause size={18} />}
+            </button>
+            <button type="button" onClick={goPrev} className={navBtnClass} aria-label="Previous service">
               <ChevronLeft size={22} strokeWidth={2.5} />
             </button>
-            <button type="button" onClick={handleNext} className={navBtnClass} aria-label="Next Service">
+            <button type="button" onClick={goNext} className={navBtnClass} aria-label="Next service">
               <ChevronRight size={22} strokeWidth={2.5} />
             </button>
           </div>
         </div>
 
-        {/* ==========================================================================
-           CORE PROGRAMMATIC WIDESCREEN 3D SPATIAL FIELD
-           ========================================================================== */}
-        <div className="coverflow-3d-viewport w-full min-h-[460px] flex items-center justify-center relative py-12 select-none">
-          {/* Expanded track limits on desktop to widen the horizontal interface layout */}
+        {/* ==========================================
+           3D COVERFLOW
+           ========================================== */}
+        <div
+          className="coverflow-3d-viewport w-full min-h-[460px] flex items-center justify-center relative py-12 select-none"
+          role="region"
+          aria-roledescription="carousel"
+          aria-label="Our cleaning services"
+        >
           <div className="coverflow-3d-track w-full max-w-sm md:max-w-xl h-[360px] relative flex items-center justify-center">
-            
             {services.map((service, index) => {
               const offset = index - activeIndex;
               const absOffset = Math.abs(offset);
-              
+
               if (absOffset > 2 && absOffset < services.length - 2) return null;
 
               const isActive = index === activeIndex;
-              
-              // Clean up title: Removes " — Pune" so it fits nicely and prominently on the card
               const cleanTitle = service.title.split(" — ")[0];
 
-              // Responsive spacing parameters to spread elements out across wide monitors
-              const horizontalStep = isMobile ? 150 : 310; 
+              const horizontalStep = isMobile ? 150 : 310;
               const stackingStep = isMobile ? 35 : 55;
-              
+
               const rotateY = offset === 0 ? 0 : offset > 0 ? -45 : 45;
               const translateZ = offset === 0 ? 140 : -120 * absOffset;
-              const translateX = offset === 0 ? 0 : offset > 0 
-                ? horizontalStep + (offset * stackingStep) 
-                : -horizontalStep + (offset * stackingStep);
-                
+              const translateX =
+                offset === 0
+                  ? 0
+                  : offset > 0
+                  ? horizontalStep + offset * stackingStep
+                  : -horizontalStep + offset * stackingStep;
+
               const opacity = offset === 0 ? 1 : absOffset === 1 ? 0.7 : 0.25;
               const zIndex = 10 - absOffset;
 
@@ -102,37 +189,36 @@ export default function ServicesSlider() {
                   animate={{
                     x: translateX,
                     scale: isActive ? 1 : 0.82,
-                    rotateY: rotateY,
+                    rotateY,
                     z: translateZ,
-                    opacity: opacity,
-                    zIndex: zIndex,
+                    opacity,
+                    zIndex,
                   }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 200,
-                    damping: 24,
+                  transition={{ type: "spring", stiffness: 200, damping: 24 }}
+                  onClick={() => {
+                    setIsPaused(true);
+                    setActiveIndex(index);
                   }}
-                  onClick={() => setActiveIndex(index)}
+                  aria-hidden={!isActive}
                 >
                   <div className="relative w-full h-full rounded-xl overflow-hidden group">
                     <Image
                       src={service.img}
                       alt={cleanTitle}
                       fill
-                      sizes="(max-w-md) 100vw"
-                      className="object-cover transition-transform duration-700 select-none"
-                      priority={isActive}
+                      sizes="(max-width: 768px) 90vw, 576px"
+                      className="object-cover select-none"
+                      priority={index < 3}
                     />
 
-                    {/* Slightly darkened gradient bottom to ensure pure white text contrast */}
-                    <div className={`absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent transition-opacity duration-300 ${isActive ? "opacity-90" : "opacity-70"}`} />
+                    <div
+                      className={`absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent transition-opacity duration-300 ${
+                        isActive ? "opacity-90" : "opacity-70"
+                      }`}
+                    />
 
                     <div className="absolute inset-x-0 bottom-0 p-6 flex flex-col justify-end space-y-4 z-10">
-                      {/* Enforced explicit white color and drop-shadow for maximum visibility */}
-                      <h3 
-                        className="font-heading font-extrabold text-lg sm:text-xl md:text-2xl tracking-tight leading-tight text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"
-                        style={{ color: "#FFFFFF" }}
-                      >
+                      <h3 className="font-heading font-bold text-lg sm:text-xl md:text-2xl tracking-tight leading-tight text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
                         {cleanTitle}
                       </h3>
 
@@ -146,7 +232,7 @@ export default function ServicesSlider() {
                             href={`/services/${service.id}`}
                             className="inline-flex items-center gap-1.5 text-xs font-bold font-body uppercase tracking-widest text-[#006fe3] bg-white px-5 py-3 rounded-xs w-fit shadow-md transition-all duration-300 hover:bg-[#006fe3] hover:text-white"
                           >
-                            Explore Service
+                            Explore service
                             <ArrowUpRight size={14} />
                           </Link>
                         </motion.div>
@@ -156,20 +242,49 @@ export default function ServicesSlider() {
                 </motion.div>
               );
             })}
-
           </div>
         </div>
 
-        {/* Mobile Control Indicators */}
-        <div className="flex md:hidden justify-center gap-4 mt-6">
-          <button type="button" onClick={handlePrev} className={navBtnClass + " w-10 h-10"} aria-label="Previous Service">
-            <ChevronLeft size={18} />
-          </button>
-          <button type="button" onClick={handleNext} className={navBtnClass + " w-10 h-10"} aria-label="Next Service">
-            <ChevronRight size={18} />
-          </button>
-        </div>
+        {/* ==========================================
+           PROGRESS DOTS + MOBILE CONTROLS
+           ========================================== */}
+        <div className="flex flex-col items-center gap-5 mt-6">
+          <div className="flex items-center justify-center gap-1.5" role="tablist" aria-label="Select service">
+            {services.map((service, i) => (
+              <button
+                key={service.id}
+                type="button"
+                role="tab"
+                aria-selected={i === activeIndex}
+                aria-label={service.title}
+                onClick={() => {
+                  setIsPaused(true);
+                  setActiveIndex(i);
+                }}
+                className={`h-1.5 rounded-full transition-all duration-400 cursor-pointer ${
+                  i === activeIndex ? "w-7 bg-[#006fe3]" : "w-1.5 bg-neutral-300 hover:bg-neutral-400"
+                }`}
+              />
+            ))}
+          </div>
 
+          <div className="flex md:hidden justify-center gap-4">
+            <button type="button" onClick={goPrev} className={navBtnClass + " w-10 h-10"} aria-label="Previous service">
+              <ChevronLeft size={18} />
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsPaused((p) => !p)}
+              className={navBtnClass + " w-10 h-10"}
+              aria-label={isPaused ? "Resume auto-scroll" : "Pause auto-scroll"}
+            >
+              {isPaused ? <Play size={16} /> : <Pause size={16} />}
+            </button>
+            <button type="button" onClick={goNext} className={navBtnClass + " w-10 h-10"} aria-label="Next service">
+              <ChevronRight size={18} />
+            </button>
+          </div>
+        </div>
       </div>
     </section>
   );

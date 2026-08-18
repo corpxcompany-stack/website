@@ -1,38 +1,49 @@
 import type { Metadata } from "next";
-// Updated: Swapped out Playfair_Display for Poppins
-import { Poppins, Plus_Jakarta_Sans } from "next/font/google";
+import { Instrument_Sans, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
-// Components (Preserved your explicit file paths and shell lifecycle layout)
+// Components
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import FloatingContactButtons from "@/components/ui/FloatingContactButtons";
 import Preloader from "@/components/ui/preloader";
 
-// Initialize modern, geometric heading typography loader
-const poppins = Poppins({
+/* ---------------------------------------------------------------------------
+   HEADING TYPEFACE
+   Swapped Poppins -> Instrument Sans. Poppins is a geometric display face
+   (perfect circles, single-storey 'a') that reads friendly/startup rather than
+   established. Instrument Sans is slightly narrower with a taller x-height and
+   a two-storey 'a' — it reads as a company that has been operating since 2016.
+
+   To try an alternative, change ONLY these two lines:
+     Manrope  -> import { Manrope } from "next/font/google";  weight ["500","600","700","800"]
+     Figtree  -> import { Figtree } from "next/font/google";  weight ["500","600","700","800"]
+--------------------------------------------------------------------------- */
+const headingFont = Instrument_Sans({
   subsets: ["latin"],
-  variable: "--font-heading",
-  weight: ["600", "700", "800"],
+  variable: "--font-heading-sans",
+  weight: ["500", "600", "700"],
   display: "swap",
 });
 
-const plusJakarta = Plus_Jakarta_Sans({
+const bodyFont = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  variable: "--font-body",
+  variable: "--font-body-sans",
   weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
-// High-end, conversion-oriented local SEO configuration
 export const metadata: Metadata = {
   title: {
-    default: "Corpx | Premium Deep Cleaning Services in Pune, Mumbai & Bangalore",
-    template: "%s | Corpx",
+    default: "CorpX | Deep Cleaning Services in Pune, Mumbai, Bangalore & Hyderabad",
+    template: "%s | CorpX",
   },
   description:
-    "Trusted deep cleaning service for luxury homes, modern offices, and commercial properties across Pune, Mumbai, Hyderabad, and Bangalore. Safe products, verified professionals, and spotless results since 2016.",
-  metadataBase: new URL("https://corpx.com"),
+    "Professional deep cleaning for homes, offices and commercial properties across Pune, Mumbai, Hyderabad and Bangalore. ISO 9001:2015 certified, verified staff, transparent pricing. Serving since 2016.",
+  metadataBase: new URL("https://mycorpx.com"),
+  alternates: {
+    canonical: "/",
+  },
   keywords: [
     "Deep Cleaning Services in Pune",
     "Home Cleaning Mumbai",
@@ -43,10 +54,12 @@ export const metadata: Metadata = {
     "Commercial Cleaning Services India",
   ],
   openGraph: {
-    title: "Corpx Premium Cleaning Services",
-    description: "Expert top-to-bottom deep cleaning for residential and commercial spaces across Pune, Mumbai, Hyderabad & Bangalore.",
+    title: "CorpX | Deep Cleaning Services",
+    description:
+      "Deep cleaning for homes, offices and commercial spaces across Pune, Mumbai, Hyderabad and Bangalore. ISO 9001:2015 certified.",
     type: "website",
     locale: "en_IN",
+    siteName: "CorpX",
   },
   icons: {
     icon: "/favicon.ico",
@@ -59,34 +72,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html 
-      lang="en" 
-      /* Updated: Injecting poppins.variable instead of playfair.variable */
-      className={`${poppins.variable} ${plusJakarta.variable} scroll-smooth`}
+    <html
+      lang="en"
+      className={`${headingFont.variable} ${bodyFont.variable} scroll-smooth`}
     >
       <body className="font-body antialiased bg-white text-neutral-900 selection:bg-[#006fe3]/10 selection:text-[#006fe3]">
-        
-        {/* Preloader - Renders first in the document execution flow */}
+
         <Preloader />
 
-        {/* App Shell Layer Layout */}
         <div className="flex min-h-screen flex-col relative">
-          
-          {/* Fixed/Sticky Navigation Element */}
           <Navbar />
-
-          {/* Main Context Stage - Built with custom layout spacing to prevent sticky Navbar overlap */}
-          <main className="flex-1">
-            {children}
-          </main>
-
-          {/* Minimalist Footing Asset */}
+          <main className="flex-1">{children}</main>
           <Footer />
         </div>
 
-        {/* Floating CTA System (Positioned cleanly outside standard screen layout constraints) */}
         <FloatingContactButtons />
-
       </body>
     </html>
   );

@@ -1,0 +1,21 @@
+/* ==========================================================================
+   PRICING SECTION
+   ========================================================================== */
+.pricing-canvas {
+  background: radial-gradient(circle at 50% 0%, rgba(0, 111, 227, 0.02) 0%, transparent 45%),
+              linear-gradient(to bottom, #ffffff 0%, #f8fafc 100%);
+}
+
+.pricing-tile {
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.4s ease;
+}
+
+.pricing-tile:hover {
+  transform: translateY(-6px);
+  border-color: rgba(0, 111, 227, 0.22);
+  box-shadow:
+    0 30px 60px -20px rgba(0, 111, 227, 0.09),
+    0 12px 24px -24px rgba(0, 0, 0, 0.05);
+}

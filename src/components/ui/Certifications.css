@@ -1,0 +1,26 @@
+/* ==========================================================================
+   CERTIFICATIONS — ISO & GST
+   ========================================================================== */
+.certifications-canvas {
+  background: radial-gradient(circle at 50% 0%, rgba(0, 111, 227, 0.02) 0%, transparent 50%),
+              #ffffff;
+}
+
+.certificate-tile {
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, box-shadow;
+}
+
+.certificate-tile:hover {
+  transform: translateY(-5px);
+  box-shadow:
+    0 28px 56px -22px rgba(0, 0, 0, 0.10),
+    0 10px 20px -18px rgba(0, 0, 0, 0.06);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .certificate-tile:hover {
+    transform: none;
+  }
+}
