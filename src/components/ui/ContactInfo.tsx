@@ -1,133 +1,103 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, Clock } from "lucide-react";
+import { Mail, Phone, ArrowUpRight } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa6";
 
 /* ---------------------------------------------------------------------------
-   CHANGE #15 — Contact page details, structured the way the client specified:
-   contact methods first, service locations as a separate block.
+   PANEL 1 — HOW TO REACH US
 
-   The previous version invented four office street addresses (Andheri West,
-   Indiranagar, HITEC City). Those are removed — the client asked for service
-   LOCATIONS, not offices. If real branch addresses exist, add them back.
+   Three cramped cards side by side forced "+91 95950 00022" to break mid-number
+   with break-all. Rows instead: the number stays on one line, each method gets
+   its own response-time line, and the whole panel scans top to bottom like a
+   list of options rather than a grid of tiles.
 --------------------------------------------------------------------------- */
 
-const contactMethods = [
+const methods = [
+  {
+    icon: FaWhatsapp,
+    title: "WhatsApp",
+    value: "+91 95950 00022",
+    caption: "Fastest way to a quote",
+    href: "https://wa.me/919595000022?text=Hi%20CorpX%2C%20I%27d%20like%20a%20quote%20for%20cleaning%20services.",
+    tone: "text-[#25d366]",
+    external: true,
+  },
   {
     icon: Phone,
     title: "Phone",
     value: "+91 95950 00022",
     caption: "Mon–Sat, 9:00 AM – 8:00 PM",
     href: "tel:+919595000022",
-    accent: "text-[#006fe3]",
-    ring: "group-hover:border-[#006fe3]/30",
+    tone: "text-[#006fe3]",
   },
   {
     icon: Mail,
     title: "Email",
     value: "info@mycorpx.com",
-    caption: "We reply within one working hour",
+    caption: "Reply within one working hour",
     href: "mailto:info@mycorpx.com",
-    accent: "text-[#006fe3]",
-    ring: "group-hover:border-[#006fe3]/30",
-  },
-  {
-    icon: FaWhatsapp,
-    title: "WhatsApp",
-    value: "+91 95950 00022",
-    caption: "Fastest way to get a quote",
-    href: "https://wa.me/919595000022?text=Hi%20CorpX%2C%20I%27d%20like%20a%20quote%20for%20cleaning%20services.",
-    accent: "text-[#25d366]",
-    ring: "group-hover:border-[#25d366]/40",
-    external: true,
+    tone: "text-[#006fe3]",
   },
 ];
 
-const serviceLocations = ["Pune", "Mumbai", "Hyderabad", "Bangalore"];
-
 export default function ContactInfo() {
   return (
-    <div className="space-y-6">
+    <motion.section
+      initial={{ opacity: 0, y: 18 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      className="bg-white rounded-2xl border border-neutral-200/70 shadow-[0_4px_20px_rgba(0,0,0,0.04)] overflow-hidden"
+      aria-labelledby="reach-us"
+    >
+      <header className="px-6 pt-6 pb-4">
+        <h2
+          id="reach-us"
+          className="font-heading text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-900"
+        >
+          Talk to us
+        </h2>
+        <p className="font-body text-[11px] text-neutral-400 mt-1">
+          Three ways in. All of them reach the same desk.
+        </p>
+      </header>
 
-      {/* ==========================================
-         CONTACT METHODS
-         ========================================== */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {contactMethods.map((item, index) => {
-          const Icon = item.icon;
+      <ul className="divide-y divide-neutral-100 border-t border-neutral-100">
+        {methods.map((m) => {
+          const Icon = m.icon;
           return (
-            <motion.a
-              key={item.title}
-              href={item.href}
-              target={item.external ? "_blank" : undefined}
-              rel={item.external ? "noopener noreferrer" : undefined}
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.4, delay: index * 0.08 }}
-              whileHover={{ y: -4 }}
-              className={`group bg-white p-6 rounded-2xl border border-neutral-200/70 shadow-[0_4px_20px_rgba(0,0,0,0.04)] hover:shadow-[0_16px_36px_-16px_rgba(0,111,227,0.16)] transition-all duration-300 block ${item.ring}`}
-            >
-              <div className={`w-10 h-10 rounded-lg bg-neutral-50 border border-neutral-200/60 flex items-center justify-center mb-4 ${item.accent}`}>
-                <Icon size={18} />
-              </div>
+            <li key={m.title}>
+              <a
+                href={m.href}
+                target={m.external ? "_blank" : undefined}
+                rel={m.external ? "noopener noreferrer" : undefined}
+                className="group flex items-center gap-4 px-6 py-4 transition-colors duration-200 hover:bg-neutral-50/80 focus-visible:outline-none focus-visible:bg-neutral-50"
+              >
+                <span
+                  className={`w-9 h-9 shrink-0 rounded-lg bg-neutral-50 border border-neutral-200/60 flex items-center justify-center ${m.tone}`}
+                >
+                  <Icon size={16} />
+                </span>
 
-              <h3 className="font-heading font-bold text-neutral-900 text-xs uppercase tracking-widest mb-1.5">
-                {item.title}
-              </h3>
-              <p className="font-body font-bold text-neutral-900 text-sm break-all leading-snug">
-                {item.value}
-              </p>
-              <p className="font-body text-[11px] text-neutral-400 font-medium mt-1.5 leading-relaxed">
-                {item.caption}
-              </p>
-            </motion.a>
+                <span className="min-w-0 flex-1">
+                  <span className="block font-body font-bold text-neutral-900 text-sm whitespace-nowrap">
+                    {m.value}
+                  </span>
+                  <span className="block font-body text-[11px] text-neutral-400 mt-0.5">
+                    {m.title} · {m.caption}
+                  </span>
+                </span>
+
+                <ArrowUpRight
+                  size={15}
+                  className="shrink-0 text-neutral-300 transition-all duration-200 group-hover:text-[#006fe3] group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                />
+              </a>
+            </li>
           );
         })}
-      </div>
-
-      {/* ==========================================
-         SERVICE LOCATIONS
-         ========================================== */}
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.2 }}
-        transition={{ duration: 0.4, delay: 0.2 }}
-        className="bg-white p-6 sm:p-7 rounded-2xl border border-neutral-200/70 shadow-[0_4px_20px_rgba(0,0,0,0.04)]"
-      >
-        <div className="flex items-center gap-3 mb-5 pb-4 border-b border-neutral-100">
-          <div className="w-10 h-10 rounded-lg bg-neutral-50 border border-neutral-200/60 flex items-center justify-center text-[#006fe3] shrink-0">
-            <MapPin size={18} />
-          </div>
-          <div>
-            <h3 className="font-heading font-bold text-neutral-900 text-xs uppercase tracking-widest">
-              Service locations
-            </h3>
-            <p className="font-body text-[11px] text-neutral-400 font-medium mt-0.5">
-              Where our teams operate
-            </p>
-          </div>
-        </div>
-
-        <ul className="grid grid-cols-2 gap-3">
-          {serviceLocations.map((city) => (
-            <li
-              key={city}
-              className="flex items-center gap-2.5 bg-neutral-50/70 border border-neutral-200/60 rounded-xl px-4 py-3 font-body font-bold text-neutral-800 text-sm transition-colors duration-300 hover:border-[#006fe3]/30 hover:bg-[#006fe3]/[0.03]"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-[#006fe3] shrink-0" />
-              {city}
-            </li>
-          ))}
-        </ul>
-
-        <p className="font-body text-[11px] text-neutral-400 font-medium mt-4 flex items-center gap-2">
-          <Clock size={12} className="shrink-0" />
-          Site visits and quotes are usually scheduled within 24–48 hours.
-        </p>
-      </motion.div>
-    </div>
+      </ul>
+    </motion.section>
   );
 }
