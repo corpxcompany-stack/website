@@ -100,13 +100,13 @@ export default function Preloader() {
               height="600" 
               viewBox="0 0 600 600" 
               fill="none" 
-              className="w-[85vw] h-[85vw] max-w-[600px] max-h-[600px] opacity-20"
+              className="w-[85vw] h-[85vw] max-w-[600px] max-h-[600px] opacity-100"
             >
               <motion.circle 
                 cx="300" 
                 cy="300" 
                 r="180" 
-                stroke="#006fe3" 
+                stroke="#ffa500" 
                 strokeWidth="1" 
                 strokeDasharray="4 8"
                 animate={{ rotate: 360 }}

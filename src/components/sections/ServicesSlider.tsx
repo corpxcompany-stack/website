@@ -12,7 +12,7 @@ import "./ServicesSlider.css";
 const CITIES = ["Pune", "Mumbai", "Bangalore", "Hyderabad"];
 
 /* CHANGE #12 — auto-advance interval, in ms. */
-const AUTOPLAY_MS = 4500;
+const AUTOPLAY_MS = 1500; // Decreased slightly to 1.5s for a better scrolling feel
 
 export default function ServicesSlider() {
   const services: ServiceItem[] = getServicesByLocation("Pune");
@@ -40,20 +40,21 @@ export default function ServicesSlider() {
     setActiveIndex((prev) => (prev - 1 + services.length) % services.length);
   }, [services.length]);
 
-  /* Manual navigation pauses autoplay so the carousel never fights the user. */
+  /* 
+    FIXED: Manual navigation temporarily stops the current interval, 
+    but we do NOT set isPaused to true permanently so autoplay continues. 
+  */
   const goNext = () => {
-    setIsPaused(true);
     handleNext();
   };
+  
   const goPrev = () => {
-    setIsPaused(true);
     handlePrev();
   };
 
   /* ---------------------------------------------------------------------
      CHANGE #12 — AUTOPLAY
-     Stops when: paused by hover/focus/manual input, the tab is hidden, the
-     section is off-screen, or the visitor has asked for reduced motion.
+     Stops when: explicitly paused via play/pause button or hover.
      --------------------------------------------------------------------- */
   useEffect(() => {
     if (isPaused) return;
@@ -85,15 +86,12 @@ export default function ServicesSlider() {
     <section
       ref={sectionRef}
       className="w-full py-20 md:py-28 bg-gradient-to-b from-neutral-50 via-white to-white overflow-hidden"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
-      onFocusCapture={() => setIsPaused(true)}
     >
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
 
         {/* ==========================================
-           HEADER — cities highlighted (CHANGE #11)
-           ========================================== */}
+            HEADER — cities highlighted (CHANGE #11)
+            ========================================== */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
           <div className="space-y-5 max-w-3xl">
             <div className="inline-flex items-center gap-2 bg-[#006fe3]/5 border border-[#006fe3]/10 text-[#006fe3] rounded-full px-4 py-1.5 text-xs font-bold tracking-wider uppercase font-body">
@@ -148,13 +146,17 @@ export default function ServicesSlider() {
         </div>
 
         {/* ==========================================
-           3D COVERFLOW
-           ========================================== */}
+            3D COVERFLOW
+            ========================================== */}
         <div
           className="coverflow-3d-viewport w-full min-h-[460px] flex items-center justify-center relative py-12 select-none"
           role="region"
           aria-roledescription="carousel"
           aria-label="Our cleaning services"
+          /* MOVED HOVER EVENTS HERE: Now it only pauses when hovering the slider images */
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+          onFocusCapture={() => setIsPaused(true)}
         >
           <div className="coverflow-3d-track w-full max-w-sm md:max-w-xl h-[360px] relative flex items-center justify-center">
             {services.map((service, index) => {
@@ -195,10 +197,7 @@ export default function ServicesSlider() {
                     zIndex,
                   }}
                   transition={{ type: "spring", stiffness: 200, damping: 24 }}
-                  onClick={() => {
-                    setIsPaused(true);
-                    setActiveIndex(index);
-                  }}
+                  onClick={() => setActiveIndex(index)}
                   aria-hidden={!isActive}
                 >
                   <div className="relative w-full h-full rounded-xl overflow-hidden group">
@@ -246,8 +245,8 @@ export default function ServicesSlider() {
         </div>
 
         {/* ==========================================
-           PROGRESS DOTS + MOBILE CONTROLS
-           ========================================== */}
+            PROGRESS DOTS + MOBILE CONTROLS
+            ========================================== */}
         <div className="flex flex-col items-center gap-5 mt-6">
           <div className="flex items-center justify-center gap-1.5" role="tablist" aria-label="Select service">
             {services.map((service, i) => (
@@ -257,10 +256,7 @@ export default function ServicesSlider() {
                 role="tab"
                 aria-selected={i === activeIndex}
                 aria-label={service.title}
-                onClick={() => {
-                  setIsPaused(true);
-                  setActiveIndex(i);
-                }}
+                onClick={() => setActiveIndex(i)}
                 className={`h-1.5 rounded-full transition-all duration-400 cursor-pointer ${
                   i === activeIndex ? "w-7 bg-[#006fe3]" : "w-1.5 bg-neutral-300 hover:bg-neutral-400"
                 }`}

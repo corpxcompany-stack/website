@@ -32,6 +32,7 @@ export default function HomePage() {
         <HeroSection />
         <VideoSection />
       </section>
+      <Clients />
 
       {/* 2. Quick authority */}
       <StatsSection />
@@ -47,7 +48,6 @@ export default function HomePage() {
         <GalleryView />
       </div>
       <Testimonials />
-      <Clients />
 
       {/* 6. How the job runs */}
       <Process />

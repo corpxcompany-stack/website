@@ -2,32 +2,42 @@
 
 import { motion } from "framer-motion";
 import { ShieldCheck, Building2 } from "lucide-react";
+import Image from "next/image";
 import "./Clients.css";
 
+/* ==========================================
+   CLIENT DATA MAPPING WITH LOGOS
+   ========================================== */
 const companiesRow1 = [
-  { name: "Larsen & Toubro" },
-  { name: "Tata Motors" },
-  { name: "Bosch" },
-  { name: "Siemens" },
-  { name: "Cummins" },
+  { name: "Anj: Giving Life to Ideas", logo: "/clients/anj.avif" },
+  { name: "Atur India", logo: "/clients/atur.avif" },
+  { name: "Battrixx: Future Energy", logo: "/clients/battrixx.avif" },
+  { name: "Bobst", logo: "/clients/bobst.avif" },
+  { name: "Colliers", logo: "/clients/colliers.avif" },
+  { name: "Cowrks", logo: "/clients/cowrks.avif" },
+  { name: "Electromech Infraprojects Ltd", logo: "/clients/electromech.avif" },
+  { name: "Eleganz Interiors Ltd", logo: "/clients/eleganz.avif" },
 ];
 
 const companiesRow2 = [
-  { name: "Mahindra" },
-  { name: "ABB" },
-  { name: "Schneider Electric" },
-  { name: "Honeywell" },
-  { name: "JCB" },
+  { name: "Elementis: A Global Speciality Chemicals Company", logo: "/clients/elementis.avif" },
+  { name: "Holcim", logo: "/clients/holcim.avif" },
+  { name: "Hindustani Petroleum", logo: "/clients/hp.avif" },
+  { name: "Kamdhenu", logo: "/clients/kamdhenugroup.avif" },
+  { name: "MIPPL: Your Turnkey Interior Partner", logo: "/clients/mippl.avif" },
+  { name: "PETER/Lacke: The Coating Experts", logo: "/clients/peter.avif" },
+  { name: "Space Interrioz: Ventures Pvt ltd", logo: "/clients/space.avif" },
+  { name: "Webber Electro Corp", logo: "/clients/webber.avif" },
 ];
 
-function MarqueeRow({ items, reverse = false }: { items: { name: string }[]; reverse?: boolean }) {
+function MarqueeRow({ items, reverse = false }: { items: { name: string; logo: string }[]; reverse?: boolean }) {
   return (
-    <div className="relative overflow-hidden w-full py-2">
+    <div className="relative overflow-hidden w-full py-3">
       <motion.div
         className="flex gap-4 md:gap-6 whitespace-nowrap items-center marquee-gpu-layer"
         animate={{ x: reverse ? ["-50%", "0%"] : ["0%", "-50%"] }}
         transition={{
-          duration: 28, 
+          duration: 45, 
           repeat: Infinity,
           repeatType: "loop",
           ease: "linear",
@@ -37,14 +47,16 @@ function MarqueeRow({ items, reverse = false }: { items: { name: string }[]; rev
         {[...items, ...items, ...items, ...items].map((item, i) => (
           <div
             key={i}
-            className="inline-flex items-center bg-white border border-sky-100/70 rounded-xl px-6 py-3.5 shadow-[0_4px_12px_-6px_rgba(14,165,233,0.03)] transition-all duration-500 hover:border-[#006fe3]/40 hover:shadow-[0_12px_24px_-10px_rgba(0,111,227,0.08)] hover:-translate-y-0.5 group cursor-pointer"
+            title={item.name}
+            className="flex items-center justify-center shrink-0 bg-white border border-sky-100/70 rounded-2xl w-[180px] md:w-[220px] h-[90px] md:h-[110px] px-6 shadow-[0_4px_12px_-6px_rgba(14,165,233,0.03)] transition-all duration-500 hover:border-[#006fe3]/40 hover:shadow-[0_12px_24px_-10px_rgba(0,111,227,0.08)] hover:-translate-y-1 group cursor-pointer"
           >
-            {/* Elegant Mini Status Dot Indicator */}
-            <span className="w-1.5 h-1.5 rounded-full bg-sky-200 group-hover:bg-[#006fe3] transition-colors duration-400 mr-2 shrink-0" />
-            
-            <span className="text-xs md:text-sm font-bold tracking-wide uppercase text-neutral-600 transition-colors duration-300 group-hover:text-neutral-900 font-body">
-              {item.name}
-            </span>
+            <Image
+              src={item.logo}
+              alt={item.name}
+              width={160}
+              height={80}
+              className="w-auto h-12 md:h-16 object-contain"
+            />
           </div>
         ))}
       </motion.div>
@@ -58,8 +70,8 @@ export default function Clients() {
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         
         {/* ==========================================
-           1. PREMIUM ASYMMETRIC TRUST HEADER
-           ========================================== */}
+            1. PREMIUM ASYMMETRIC TRUST HEADER
+            ========================================== */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start mb-20">
           
           <div className="lg:col-span-7 space-y-4">
@@ -89,16 +101,16 @@ export default function Clients() {
         </div>
 
         {/* ==========================================
-           2. SEAMLESS INFINITE TEXT MARQUEE DECK
-           ========================================== */}
-        <div className="space-y-6 marquee-luxury-mask relative z-10 select-none">
+            2. SEAMLESS INFINITE LOGO MARQUEE DECK
+            ========================================== */}
+        <div className="space-y-4 md:space-y-6 marquee-luxury-mask relative z-10 select-none">
           <MarqueeRow items={companiesRow1} />
           <MarqueeRow items={companiesRow2} reverse />
         </div>
 
         {/* ==========================================
-           3. FLOATING VERIFICATION SIGNPOST
-           ========================================== */}
+            3. FLOATING VERIFICATION SIGNPOST
+            ========================================== */}
         <div className="flex justify-center items-center gap-2.5 mt-16 text-neutral-500 font-body text-xs font-bold uppercase tracking-widest">
           <ShieldCheck size={15} className="text-[#006fe3]" />
           Corporate Compliance &amp; Insurance Verified

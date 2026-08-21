@@ -3,7 +3,7 @@
 import { useState, useActionState } from "react";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { Home, Briefcase, Mail, Calendar, Info, CircleHelp, ArrowRight } from "lucide-react";
+import { Home, Briefcase, Mail, Calendar, Info, CircleHelp, ArrowRight, Tag } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
@@ -15,6 +15,7 @@ const navLinks = [
   { name: "Home", href: "/", icon: Home },
   { name: "About Us", href: "/about", icon: Info },
   { name: "Services", href: "/services", icon: Briefcase },
+  { name: "Pricing", href: "/#pricing", icon: Tag }, // Added Pricing Link
   { name: "FAQs", href: "/faqs", icon: CircleHelp },
   { name: "Contact", href: "/contact", icon: Mail },
 ];
@@ -49,6 +50,7 @@ export default function Navbar() {
           {/* Premium Floating Track Matrix Menu */}
           <nav className="flex items-center gap-2 bg-neutral-100/60 p-1.5 rounded-full border border-neutral-200/30 font-body text-xs sm:text-sm text-neutral-600">
             {navLinks.map((link) => {
+              // Note: active state for hash links (/#pricing) relies on standard anchor behavior
               const isActive = pathname === link.href;
               
               return (
@@ -96,7 +98,8 @@ export default function Navbar() {
         </Link>
         <div className="flex items-center gap-6">
           <nav className="flex gap-6 text-sm font-medium font-body">
-            {navLinks.filter(l => ["Home", "Services", "Contact"].includes(l.name)).map((link) => (
+            {/* Added Pricing to Tablet Nav */}
+            {navLinks.filter(l => ["Home", "Services", "Pricing", "Contact"].includes(l.name)).map((link) => (
               <Link 
                 key={link.name} 
                 href={link.href} 
@@ -146,7 +149,8 @@ export default function Navbar() {
         className="md:hidden fixed bottom-0 w-full z-50 bottom-dock-blur border-t border-black/[0.04] rounded-t-3xl shadow-[0_-12px_40px_-20px_rgba(0,111,227,0.12)] px-4 py-3 pb-5"
       >
         <div className="flex justify-between items-center relative">
-          {navLinks.filter(link => link.name !== "About Us").map((link) => {
+          {/* Excluded "About Us" and "FAQs" to fit "Pricing" beautifully on Mobile */}
+          {navLinks.filter(link => !["About Us", "FAQs"].includes(link.name)).map((link) => {
             const isSelected = pathname === link.href;
             
             return (

@@ -30,31 +30,35 @@ const capabilities = [
 ];
 
 /* CHANGE #7 — single source of truth for social links.
-   Add or swap entries here and both the icon and the aria-label follow. */
+   Updated to display original brand colors by default. */
 const socials = [
   {
     label: "Instagram",
     href: "https://www.instagram.com/corpxtensions?igsh=b3ByaDJqZXVwaHpi",
     Icon: FaInstagram,
-    hover: "hover:bg-[#E1306C]/10 hover:text-[#E1306C] hover:border-[#E1306C]/30",
+    colorClass: "text-[#E1306C]",
+    hoverClass: "hover:bg-[#E1306C]/10 hover:border-[#E1306C]/30",
   },
   {
     label: "Facebook",
     href: "https://www.facebook.com/profile.php?id=61591152821093",
     Icon: FaFacebook,
-    hover: "hover:bg-[#1877F2]/10 hover:text-[#1877F2] hover:border-[#1877F2]/30",
+    colorClass: "text-[#1877F2]",
+    hoverClass: "hover:bg-[#1877F2]/10 hover:border-[#1877F2]/30",
   },
   {
     label: "LinkedIn",
     href: "https://www.linkedin.com/company/corp-xtensions-llp/",
     Icon: FaLinkedin,
-    hover: "hover:bg-[#0A66C2]/10 hover:text-[#0A66C2] hover:border-[#0A66C2]/30",
+    colorClass: "text-[#0A66C2]",
+    hoverClass: "hover:bg-[#0A66C2]/10 hover:border-[#0A66C2]/30",
   },
   {
     label: "YouTube",
     href: "https://youtube.com/@corpxtensionsllp?si=qsNvYXAGXRewbsLr",
     Icon: FaYoutube,
-    hover: "hover:bg-[#FF0000]/10 hover:text-[#FF0000] hover:border-[#FF0000]/30",
+    colorClass: "text-[#FF0000]",
+    hoverClass: "hover:bg-[#FF0000]/10 hover:border-[#FF0000]/30",
   },
 ];
 
@@ -62,7 +66,7 @@ const NAV_LINKS = [
   { label: "Home", href: "/" },
   { label: "About Us", href: "/about" },
   { label: "Services", href: "/services" },
-  { label: "Pricing", href: "/pricing" },
+  { label: "Pricing", href: "/#pricing" },
   { label: "FAQs", href: "/faqs" },
   { label: "Contact", href: "/contact" },
 ];
@@ -250,20 +254,20 @@ export default function Footer() {
               </a>
             </div>
 
-            {/* CHANGE #7 — social links */}
+            {/* CHANGE #7 — social links (Now Colorful by default) */}
             <div className="pt-2 border-t border-neutral-100 flex items-center justify-between">
               <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest font-heading">
                 Follow us
               </span>
               <div className="flex items-center gap-2">
-                {socials.map(({ label, href, Icon, hover }) => (
+                {socials.map(({ label, href, Icon, colorClass, hoverClass }) => (
                   <a
                     key={label}
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={label}
-                    className={`w-8 h-8 rounded-lg bg-white border border-neutral-200/70 flex items-center justify-center text-neutral-600 shadow-2xs transition-all duration-300 ${hover}`}
+                    className={`w-8 h-8 rounded-lg bg-white border border-neutral-200/70 flex items-center justify-center shadow-2xs transition-all duration-300 ${colorClass} ${hoverClass}`}
                   >
                     <Icon size={14} />
                   </a>
