@@ -1,34 +1,5 @@
 /* ==========================================================================
    HERO CAROUSEL — CorpX
-
-   TWO NUMBERS TO SET, ONCE, IN globals.css
-   ----------------------------------------
-   1. --nav-h : your real navbar height.
-          :root { --nav-h: 4.5rem; }
-          @media (min-width: 1024px) { :root { --nav-h: 5.5rem; } }
-
-   2. --hero-h : how tall the hero box is.
-          Navbar OVERLAYS the hero (fixed / absolute, transparent over photo):
-              --hero-h: 100svh;                        ← default below
-          Navbar sits IN FLOW above the hero (pushes it down):
-              --hero-h: calc(100svh - var(--nav-h));
-
-   Get #2 wrong and you get either a scrollbar on load or a gap under the
-   fold. Check which one your Navbar component does before shipping.
-
-   WHY svh AND NOT vh
-   On mobile Chrome and Safari, 100vh is the height WITHOUT the browser
-   chrome, so a 100vh hero is taller than the visible screen and the CTA sits
-   below the fold until the address bar collapses. svh is the small viewport
-   height — always visible. This is the single most common full-screen hero
-   bug on Indian Android traffic, where Chrome mobile dominates.
-
-   CROP BEHAVIOUR
-   The photos are 16:9. A full-height stage is rarely 16:9, so the difference
-   is absorbed by object-fit: cover plus a per-slide focal point set in the
-   component. On mobile the hero does NOT crop — see the mobile block.
-
-   Only opacity and transform animate anywhere in this file.
    ========================================================================== */
 
 .hero {
@@ -49,8 +20,6 @@
   position: relative;
   width: 100%;
   height: var(--hero-h);
-  /* Landscape phones and short laptop windows: stop the hero collapsing to a
-     letterbox slit. 30rem still shows the crew and both buttons. */
   min-height: 30rem;
   overflow: hidden;
   background: linear-gradient(140deg, #006fe3 0%, #0a5fc0 45%, #060c14 100%);
@@ -66,8 +35,6 @@
   object-fit: cover;
 }
 
-/* Left-weighted so the copy has contrast without flattening the whole photo,
-   plus a bottom lift for the controls. */
 .hero-scrim {
   position: absolute;
   inset: 0;
@@ -79,7 +46,7 @@
 }
 
 /* --------------------------------------------------------------------------
-   SCROLL CUE — a full-height hero hides the fold, so say there is more
+   SCROLL CUE
    -------------------------------------------------------------------------- */
 .hero-cue {
   position: absolute;
@@ -132,19 +99,6 @@
   max-width: 34rem;
 }
 
-/* --------------------------------------------------------------------------
-   BRAND PLAQUE
-
-   The logo needs a white background. Rather than hiding that, the plaque
-   makes it the point: a solid white card with generous padding, a brand-blue
-   edge, and the trust line sharing the space. It reads as a stamp on the
-   work, not as a logo that failed to go transparent.
-
-   LOGO SIZING
-   The <Image> width/height in the component are intrinsic hints for Next —
-   replace 320x96 with your file's real pixel dimensions or the layout shifts
-   on first paint. Rendered size is controlled here, not there.
-   -------------------------------------------------------------------------- */
 .hero-brand {
   display: inline-flex;
   align-items: stretch;
@@ -152,7 +106,6 @@
   padding: 0.85rem 1.25rem 0.85rem 1.1rem;
   border-radius: 0.65rem;
   background: #ffffff;
-  /* Brand-blue left edge, so the plaque is CorpX's and not a generic card. */
   box-shadow:
     inset 4px 0 0 0 #006fe3,
     0 18px 40px -22px rgba(0, 0, 0, 0.65);
@@ -166,8 +119,6 @@
   display: block;
   height: 2.85rem;
   width: auto;
-  /* If the source has any off-white fringing from the AVIF encode, this keeps
-     the edges reading as clean white against the card. */
   background: #ffffff;
 }
 .hero-brand-rule {
@@ -198,8 +149,6 @@
   margin-top: 1.4rem;
   font-family: var(--font-heading);
   font-weight: 700;
-  /* Ties to viewport HEIGHT as well as width, so a short laptop window does
-     not get a headline that eats the buttons. */
   font-size: clamp(2.5rem, min(5.6vw, 9.5svh), 4.75rem);
   line-height: 0.95;
   letter-spacing: -0.035em;
@@ -369,7 +318,6 @@
   outline-offset: 3px;
 }
 
-/* Bars, not dots — a bar can carry the autoplay countdown, a 7px dot can't. */
 .hero-bars {
   display: flex;
   align-items: center;
@@ -410,28 +358,20 @@
   animation-fill-mode: forwards;
   will-change: transform;
 }
-@keyframes barFill {
-  from { transform: scaleX(0); }
-  to   { transform: scaleX(1); }
-}
 
 /* --------------------------------------------------------------------------
-   DESKTOP — copy overlays the photo, controls sit inside the frame
+   DESKTOP
    -------------------------------------------------------------------------- */
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .hero-copy-wrap {
     position: absolute;
     inset: 0;
     display: flex;
     align-items: center;
-    /* Top pad clears the navbar, bottom pad clears the controls row, so the
-       copy is optically centred in the space it actually owns. */
     padding: var(--nav-h) var(--edge) 7rem;
     background: none;
     pointer-events: none;
   }
-  /* Wrapper ignores clicks so the swipe area stays live; the copy takes them
-     back, or the buttons inside would be dead. */
   .hero-copy {
     pointer-events: auto;
   }
@@ -445,8 +385,48 @@
   }
 }
 
-/* Short laptop windows (1366x768 and the like) — trim the vertical air so
-   nothing important lands under the fold. */
+@media (min-width: 1280px) {
+  .hero-brand-img {
+    height: 3.4rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   TABLET (768px to 1023px) - NEW TUNING
+   -------------------------------------------------------------------------- */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .hero-copy-wrap {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    padding: var(--nav-h) var(--edge) 7rem;
+    background: none;
+    pointer-events: none;
+  }
+  .hero-copy {
+    pointer-events: auto;
+  }
+  .hero-controls {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: 0 var(--edge) 2.25rem;
+    background: none;
+  }
+  .hero-title {
+    font-size: clamp(2.75rem, 6vw, 3.5rem);
+  }
+  .hero-sub {
+    max-width: 28rem;
+    font-size: 0.9rem;
+  }
+  .hero-brand-img {
+    height: 2.5rem;
+  }
+}
+
 @media (min-width: 768px) and (max-height: 760px) {
   .hero-copy-wrap {
     padding-bottom: 6rem;
@@ -462,19 +442,8 @@
   }
 }
 
-@media (min-width: 1280px) {
-  .hero-brand-img {
-    height: 3.4rem;
-  }
-}
-
 /* --------------------------------------------------------------------------
-   MOBILE — full screen height, WITHOUT cropping the photo
-
-   A 375x700 phone filled with a 16:9 image discards about 60% of the frame,
-   which for a crew photo means most of the crew. So the hero still fills the
-   screen, but it splits: the photo keeps its true 16:9 band at the top, and
-   the copy panel grows to take whatever height is left.
+   MOBILE — Fluid Stacking with 4:3 Aspect Ratio
    -------------------------------------------------------------------------- */
 @media (max-width: 767px) {
   .hero {
@@ -486,38 +455,85 @@
     order: 0;
     flex: 0 0 auto;
     height: auto;
-    aspect-ratio: 16 / 9;
-    min-height: 0;
+    aspect-ratio: 4 / 3; /* Taller presence on mobile */
+    min-height: 260px;
   }
   .hero-controls {
     order: 1;
     flex: 0 0 auto;
-    padding-top: 1.1rem;
+    padding-top: 1.25rem;
     padding-bottom: 0;
+    justify-content: center; /* Center the arrows visually on mobile */
   }
   .hero-copy-wrap {
     order: 2;
     flex: 1 1 auto;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     padding-top: 1.5rem;
-    padding-bottom: 2.5rem;
+    padding-bottom: 3.5rem; /* Room for bottom dock */
   }
+  
+  .hero-brand {
+    padding: 0.6rem 1rem 0.6rem 0.8rem;
+    gap: 0.75rem;
+  }
+  .hero-brand-img {
+    height: 2.1rem; /* Smaller logo for mobile */
+  }
+  .hero-brand-note {
+    font-size: 9px;
+  }
+  
   .hero-cue {
     display: none;
   }
+  
   .hero-arrow {
-    width: 2.25rem;
-    height: 2.25rem;
+    width: 2.75rem; /* Improved 44px Touch Target */
+    height: 2.75rem;
   }
-  .hero-btn {
-    flex: 1 1 10rem;
-  }
+  
   .hero-title {
-    font-size: clamp(2.1rem, 10vw, 2.9rem);
+    font-size: clamp(2.2rem, 9vw, 2.75rem);
+    margin-top: 1.25rem;
   }
+  
+  .hero-sub {
+    font-size: 0.875rem;
+    margin-top: 0.85rem;
+    line-height: 1.6;
+  }
+
+  .hero-price {
+    width: 100%;
+    justify-content: space-between;
+    margin-top: 1.25rem;
+    padding: 0.85rem 1.05rem;
+  }
+
+  .hero-actions {
+    flex-direction: column; /* Stack buttons for better thumb tapping */
+    width: 100%;
+    gap: 0.75rem;
+  }
+  
+  .hero-btn {
+    flex: none;
+    width: 100%;
+    padding: 1.1rem 1.5rem; /* Taller touch target */
+  }
+  
+  .hero-meta {
+    flex-direction: column; /* Stack contact/ISO nicely */
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-top: 1.75rem;
+  }
+
   .hero-scrim {
-    background: linear-gradient(to top, rgba(6, 12, 20, 0.85) 0%, rgba(6, 12, 20, 0.18) 45%, transparent 100%);
+    background: linear-gradient(to top, rgba(6, 12, 20, 0.95) 0%, rgba(6, 12, 20, 0.25) 45%, transparent 100%);
   }
 }
 

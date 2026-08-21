@@ -27,3 +27,63 @@
   transform-style: preserve-3d;
   backface-visibility: hidden;
 }
+
+/* ==========================================================================
+   MOBILE "ONE ROW" SWIPEABLE LAYOUT & RESPONSIVE GRID
+   ========================================================================== */
+
+/* Mobile: Horizontal Swipeable Row */
+.process-flex-container {
+  display: flex;
+  flex-wrap: nowrap;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+  gap: 1rem;
+  padding-bottom: 0.5rem;
+}
+
+.process-flex-container::-webkit-scrollbar {
+  display: none; /* Chrome/Safari/Edge */
+}
+
+.process-flex-item {
+  flex: 0 0 78vw; /* Card takes up 78% so next card peeks in */
+  max-width: 300px;
+  scroll-snap-align: center;
+}
+
+/* Disable Hover Float on Touch Screens */
+@media (hover: none) {
+  .architectural-step-tile:hover {
+    transform: none;
+    box-shadow: inherit;
+  }
+}
+
+/* Tablet & Desktop: Switch back to standard grid rows */
+@media (min-width: 640px) {
+  .process-flex-container {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    overflow-x: visible;
+    overflow-y: visible;
+    gap: 1.5rem;
+  }
+  .process-flex-item {
+    flex: none;
+    max-width: none;
+    scroll-snap-align: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .process-flex-container {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 2rem;
+  }
+}

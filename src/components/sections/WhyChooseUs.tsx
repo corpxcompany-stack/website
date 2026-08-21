@@ -89,17 +89,17 @@ const pillars = [
 
 export default function WhyChooseUs() {
   return (
-    <section className="w-full py-24 md:py-32 bg-gradient-to-b from-white via-neutral-50/20 to-white border-b border-neutral-200/60 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+    <section className="w-full py-16 sm:py-20 md:py-32 bg-gradient-to-b from-white via-neutral-50/20 to-white border-b border-neutral-200/60 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
         
         <div className="why-split-container">
           
           {/* ==========================================
              LEFT COLUMN: EDITORIAL STICKY SHOWCASE
              ========================================== */}
-          <div className="w-full lg:w-[35%] why-editorial-sticky space-y-8">
-            <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 bg-[#006fe3]/5 border border-[#006fe3]/10 text-[#006fe3] rounded-full px-4 py-1.5 text-[11px] font-bold tracking-wider uppercase font-body">
+          <div className="w-full lg:w-[35%] why-editorial-sticky space-y-6 sm:space-y-8">
+            <div className="space-y-3 sm:space-y-4">
+              <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-[#006fe3]/5 border border-[#006fe3]/10 text-[#006fe3] rounded-full px-3 py-1.5 sm:px-4 text-[10px] sm:text-[11px] font-bold tracking-wider uppercase font-body">
                 <Award size={12} className="fill-current" />
                 Value Propositions
               </div>
@@ -108,16 +108,16 @@ export default function WhyChooseUs() {
               </h2>
             </div>
 
-            <p className="font-body text-sm sm:text-base text-neutral-600 font-medium leading-relaxed">
-              When you let someone into your home or workplace, you are placing real trust in them. We take that seriously. Here is why thousands of homes and businesses across Pune, Mumbai, Bangalore & Hydrabad have chosen us over the years:
+            <p className="font-body text-[13px] sm:text-base text-neutral-600 font-medium leading-relaxed pr-2 sm:pr-0">
+              When you let someone into your home or workplace, you are placing real trust in them. We take that seriously. Here is why thousands of homes and businesses across Pune, Mumbai, Bangalore & Hyderabad have chosen us over the years:
             </p>
 
-            <div className="pt-2">
+            <div className="pt-1 sm:pt-2">
               <Link 
                 href="/contact"
-                className="btn-urgent-orange group w-full sm:w-fit inline-flex items-center justify-center gap-2 text-xs font-bold font-body uppercase tracking-widest py-4 px-8 shadow-sm rounded-sm"
+                className="btn-urgent-orange group w-full sm:w-fit inline-flex items-center justify-center gap-2 text-xs font-bold font-body uppercase tracking-widest py-3.5 sm:py-4 px-8 shadow-sm rounded-sm"
               >
-                Book Your Cleaning Today
+                Book Your Cleaning
                 <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-0.5" />
               </Link>
             </div>
@@ -126,8 +126,9 @@ export default function WhyChooseUs() {
           {/* ==========================================
              RIGHT COLUMN: VARIABLE ARCHITECTURAL GRID
              ========================================== */}
-          <div className="w-full lg:w-[65%]">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
+          <div className="w-full lg:w-[65%] mt-4 sm:mt-0">
+            {/* Reduced gap on mobile */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
               {pillars.map((pillar, idx) => {
                 const IconComponent = pillar.icon;
                 const isSpecial = pillar.id === 7;
@@ -144,29 +145,30 @@ export default function WhyChooseUs() {
                       damping: 22, 
                       delay: idx * 0.04 
                     }}
-                    className={`premium-feature-tile ${pillar.gridClass} ${pillar.bgClass} p-6 sm:p-8 rounded-xl border flex flex-col justify-between min-h-[260px] group`}
+                    /* Reduced padding and min-height for mobile */
+                    className={`premium-feature-tile ${pillar.gridClass} ${pillar.bgClass} p-5 sm:p-8 rounded-xl border flex flex-col justify-between min-h-[200px] sm:min-h-[260px] group`}
                   >
                     {/* Upper Core */}
-                    <div className="space-y-5">
-                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center border transition-all duration-500 group-hover:scale-105 shadow-xs ${pillar.iconClass}`}>
-                        <IconComponent size={18} strokeWidth={1.5} />
+                    <div className="space-y-4 sm:space-y-5">
+                      <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center border transition-transform duration-500 sm:group-hover:scale-105 shadow-xs ${pillar.iconClass}`}>
+                        <IconComponent size={16} strokeWidth={1.5} className="sm:w-[18px] sm:h-[18px]" />
                       </div>
                       
-                      <div className="space-y-1">
-                        <span className={`text-[9px] font-bold tracking-widest font-body uppercase block
+                      <div className="space-y-1 sm:space-y-1.5">
+                        <span className={`text-[8.5px] sm:text-[9px] font-bold tracking-widest font-body uppercase block
                           ${isSpecial ? "text-teal-600" : "text-neutral-400"}
                         `}>
                           {pillar.tag}
                         </span>
-                        <h3 className="font-heading font-bold text-neutral-900 text-base sm:text-lg tracking-tight leading-snug">
+                        <h3 className="font-heading font-bold text-neutral-900 text-[15px] sm:text-lg tracking-tight leading-snug">
                           {pillar.title}
                         </h3>
                       </div>
                     </div>
 
                     {/* Lower Description */}
-                    <div className="pt-5 border-t border-black/[0.03] group-hover:border-black/[0.06] transition-colors duration-500">
-                      <p className="font-body text-xs sm:text-sm text-neutral-500 font-medium leading-relaxed group-hover:text-neutral-700 transition-colors duration-300">
+                    <div className="pt-4 sm:pt-5 mt-4 sm:mt-0 border-t border-black/[0.03] sm:group-hover:border-black/[0.06] transition-colors duration-500">
+                      <p className="font-body text-[11px] sm:text-sm text-neutral-500 font-medium leading-relaxed sm:group-hover:text-neutral-700 transition-colors duration-300">
                         {pillar.description}
                       </p>
                     </div>

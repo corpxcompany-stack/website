@@ -31,3 +31,14 @@
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }
+
+/* ==========================================================================
+   MOBILE & TABLET OPTIMIZATIONS
+   ========================================================================== */
+
+@media (hover: none) {
+  .testimonial-spatial-card:hover {
+    transform: none; /* Disable card lift on touch screens to avoid sticky hover states */
+    box-shadow: inherit;
+  }
+}

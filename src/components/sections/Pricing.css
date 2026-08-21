@@ -19,3 +19,14 @@
     0 30px 60px -20px rgba(0, 111, 227, 0.09),
     0 12px 24px -24px rgba(0, 0, 0, 0.05);
 }
+
+/* ==========================================================================
+   MOBILE & TABLET OPTIMIZATIONS
+   ========================================================================== */
+
+@media (hover: none) {
+  .pricing-tile:hover {
+    transform: none; /* Disable card lift on touch screens */
+    box-shadow: inherit;
+  }
+}

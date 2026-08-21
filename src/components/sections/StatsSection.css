@@ -43,3 +43,11 @@
   transform-style: preserve-3d;
   backface-visibility: hidden;
 }
+
+/* Disable Hover Float on Touch Screens */
+@media (hover: none) {
+  .architectural-cell:hover {
+    transform: none;
+    box-shadow: none;
+  }
+}

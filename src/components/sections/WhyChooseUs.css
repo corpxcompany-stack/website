@@ -1,13 +1,18 @@
+/* ==========================================================================
+   ELITE ARCHITECTURAL SPLIT-GRID FRAMEWORK
+   ========================================================================== */
+
 .why-split-container {
   display: flex;
   flex-direction: column;
-  gap: 3rem;
+  gap: 2.5rem; /* Tighter gap on mobile */
 }
 
 @media (min-width: 1024px) {
   .why-split-container {
     flex-direction: row;
     justify-content: space-between;
+    gap: 4rem; /* Generous gap restored on desktop */
   }
 }
 
@@ -28,5 +33,16 @@
 }
 
 .premium-feature-tile:hover {
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.05);
+}
+
+/* ==========================================================================
+   MOBILE OPTIMIZATIONS
+   ========================================================================== */
+
+/* Disable Hover Float on Touch Screens to prevent sticky states */
+@media (hover: none) {
+  .premium-feature-tile:hover {
+    box-shadow: inherit; /* Revert to default shadow */
+  }
 }

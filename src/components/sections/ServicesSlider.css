@@ -3,16 +3,35 @@
    ========================================================================== */
 
 .coverflow-3d-viewport {
-  perspective: 1600px;
+  perspective: 1200px; /* Slightly reduced for a more natural depth on mobile */
   transform-style: preserve-3d;
+  /* Prevent horizontal scroll bleed on mobile */
+  overflow: hidden; 
+  width: 100%;
 }
 
 .coverflow-3d-track {
   transform-style: preserve-3d;
+  /* Improve performance during animation */
+  will-change: transform;
 }
 
 .spatial-card-container {
   transform-style: preserve-3d;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  /* Prevent text selection while dragging/tapping */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ==========================================================================
+   MOBILE OPTIMIZATIONS
+   ========================================================================== */
+
+/* Disable sticky hover states on touch devices */
+@media (hover: none) {
+  .spatial-card-container:hover {
+    transform: none;
+  }
 }

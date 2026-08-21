@@ -45,3 +45,26 @@
     border-color 0.4s ease,
     box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+/* ==========================================================================
+   MOBILE OPTIMIZATIONS
+   ========================================================================== */
+@media (max-width: 767px) {
+  .marquee-luxury-mask {
+    /* Narrower fade on mobile to maximize visible logo space */
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      #000000 5%,
+      #000000 95%,
+      transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      #000000 5%,
+      #000000 95%,
+      transparent 100%
+    );
+  }
+}

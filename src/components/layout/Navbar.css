@@ -38,11 +38,14 @@
   transform: translateX(-50%) scaleX(0.5);
 }
 
-/* Hardware-Accelerated Mobile View Controls (Standard Configurations Maintained) */
+/* Hardware-Accelerated Mobile View Controls */
 .bottom-dock-blur {
   background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+  
+  /* CRITICAL FOR MOBILE: Adds dynamic padding for iPhone's bottom home bar */
+  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
 }
 
 .nav-gpu-accelerate {

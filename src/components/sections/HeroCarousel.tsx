@@ -15,44 +15,9 @@ import {
 } from "lucide-react";
 import "./HeroCarousel.css";
 
-/* ---------------------------------------------------------------------------
-   HERO CAROUSEL — CorpX
-
-   GEOMETRY
-   Full screen height, driven by two variables set in globals.css:
-       --nav-h   your real navbar height
-       --hero-h  100svh if the navbar overlays the hero,
-                 calc(100svh - var(--nav-h)) if it sits in flow above it
-   Photos are 16:9; the difference between that and a full-height stage is
-   absorbed by object-fit: cover plus the per-slide `focal` point below.
-   On mobile the hero fills the screen without cropping — see the CSS.
-
-   BRANDING
-   The logo needs a white background, so it gets one: a white plaque, sized
-   and padded properly, sitting where the eyebrow badge used to be. That is
-   the honest fix. Do not put a white glow behind a logo on a photo and hope —
-   it reads as a mistake. A plaque reads as a signature.
-
-   CAROUSEL BEHAVIOUR
-   - 4s autoplay, pauses on focus-within, hidden tab, and off-screen (hover pause removed)
-   - Manual navigation pauses autoplay for 5s, then it resumes
-   - Explicit pause/play button (WCAG 2.2.2 — auto-moving content needs a stop)
-   - Arrow keys work when any control has focus
-   - Swipe on touch
-   - All slides stay mounted, so the next photo is decoded before it is shown
-
-   PERFORMANCE
-   Only opacity and transform animate. No layout thrash, no scroll listeners,
-   no timers running while off-screen.
---------------------------------------------------------------------------- */
-
-// UPDATED: Faster auto-slide and shorter pause after manual interaction
 const AUTOPLAY_MS = 4000;
 const RESUME_AFTER_MS = 5000;
 
-/* `city` is not printed anywhere — it only names the slide for screen readers
-   and for the bar buttons. `focal` is object-position: tune per photo so the
-   crew stays in frame when a tall window crops top and bottom. */
 const slides = [
   {
     src: "/gallery/1.avif",
@@ -90,14 +55,13 @@ export default function HeroCarousel() {
 
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState(1);
-  const [stopped, setStopped] = useState(false); // user pressed pause
-  const [nudged, setNudged] = useState(false); // user navigated, temporary
+  const [stopped, setStopped] = useState(false);
+  const [nudged, setNudged] = useState(false);
   const [hovering, setHovering] = useState(false);
   const [focused, setFocused] = useState(false);
   const [onScreen, setOnScreen] = useState(true);
   const [tabActive, setTabActive] = useState(true);
 
-  // UPDATED: Removed `!hovering` so it continues to auto-slide even when the mouse is over it
   const playing =
     !reduced && !stopped && !nudged && !focused && onScreen && tabActive && COUNT > 1;
 
@@ -106,8 +70,6 @@ export default function HeroCarousel() {
     setIndex(((next % COUNT) + COUNT) % COUNT);
   }, []);
 
-  /* Manual navigation holds autoplay, then hands it back. Killing it forever
-     leaves a static hero the moment anyone taps a control. */
   const nudge = useCallback(
     (next: number, dir: number) => {
       goTo(next, dir);
@@ -128,21 +90,18 @@ export default function HeroCarousel() {
     []
   );
 
-  /* Autoplay */
   useEffect(() => {
     if (!playing) return;
     const id = window.setTimeout(() => goTo(index + 1, 1), AUTOPLAY_MS);
     return () => window.clearTimeout(id);
   }, [playing, index, goTo]);
 
-  /* Background tab — don't burn through four slides while nobody is looking */
   useEffect(() => {
     const onVis = () => setTabActive(!document.hidden);
     document.addEventListener("visibilitychange", onVis);
     return () => document.removeEventListener("visibilitychange", onVis);
   }, []);
 
-  /* Off-screen — stop the timer once the visitor has scrolled past */
   useEffect(() => {
     const el = rootRef.current;
     if (!el || typeof IntersectionObserver === "undefined") return;
@@ -164,8 +123,6 @@ export default function HeroCarousel() {
     [next, prev]
   );
 
-  /* Swipe — 45px horizontal, and more horizontal than vertical, so a normal
-     page scroll never flips the slide. */
   const onPointerDown = useCallback((e: React.PointerEvent) => {
     if (e.pointerType === "mouse") return;
     swipeRef.current = { x: e.clientX, y: e.clientY };
@@ -239,28 +196,18 @@ export default function HeroCarousel() {
 
         <span className="hero-scrim" aria-hidden="true" />
 
-        {/* A full-height hero hides the fold. The cue says there is more. */}
         <span className="hero-cue" aria-hidden="true">
           <span className="hero-cue-line" />
         </span>
 
-        {/* Slide changes announced without moving focus */}
         <p className="sr-only" aria-live="polite">
           Slide {index + 1} of {COUNT}
         </p>
       </div>
 
-      {/* ============ COPY ============
-          Overlays the stage on desktop, stacks below it on mobile — one
-          instance either way, so the page has a single h1. */}
+      {/* ============ COPY ============ */}
       <div className="hero-copy-wrap">
         <div className="hero-copy">
-
-          {/* BRAND PLAQUE
-              The logo needs white behind it, so it sits on a white card with
-              real padding — never floated directly on the photo. The trust
-              line shares the plaque, which turns a constraint into the
-              signature element of the hero. */}
           <div className="hero-brand">
             <span className="hero-brand-mark">
               <Image
