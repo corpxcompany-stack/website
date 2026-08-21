@@ -5,7 +5,6 @@ import { motion, AnimatePresence, Variants } from "framer-motion";
 import Image from "next/image";
 import "./Preloader.css";
 
-/* ✅ CAPPED TUPLE FOR TYPESCRIPT TYPE CHECKER SAFETY */
 const luxuryEase = [0.76, 0, 0.24, 1] as const; 
 
 const curtainVariants: Variants = {
@@ -93,14 +92,15 @@ export default function Preloader() {
           {/* 1. LAYER ONE: TECHNICAL GRID MESH BACKDROP */}
           <div className="preloader-mesh-matrix" />
 
-          {/* 2. LAYER TWO: VECTOR ADVANCED DOODLE SCHEMATIC */}
+          {/* 2. LAYER TWO: FLUID VECTOR DOODLE SCHEMATIC */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-2 overflow-hidden">
             <svg 
               width="600" 
               height="600" 
               viewBox="0 0 600 600" 
               fill="none" 
-              className="w-[85vw] h-[85vw] max-w-[600px] max-h-[600px] opacity-100"
+              /* Fluid scaling: scales nicely across mobile, tablet, and desktop without clipping */
+              className="w-[85vw] h-[85vw] sm:w-[70vw] sm:h-[70vw] max-w-[500px] max-h-[500px]"
             >
               <motion.circle 
                 cx="300" 
@@ -141,7 +141,7 @@ export default function Preloader() {
           </div>
 
           {/* 3. LAYER THREE: CENTER ALIGNED SHUTTER MASTER LOGO & TEXT DECK */}
-          <div className="preloader-content-core flex flex-col items-center text-center space-y-6">
+          <div className="preloader-content-core flex flex-col items-center text-center space-y-5 sm:space-y-6">
             
             {/* Logo Shutter Frame Wrapper */}
             <div className="logo-mask-shutter py-1 px-4">
@@ -149,7 +149,7 @@ export default function Preloader() {
                 variants={logoVariants}
                 initial="hidden"
                 animate="show"
-                className="relative flex items-center justify-center"
+                className="relative flex items-center justify-center w-full"
               >
                 <Image
                   src="/logo.avif"
@@ -157,17 +157,18 @@ export default function Preloader() {
                   width={250}
                   height={100}
                   priority
-                  className="object-contain h-auto filter drop-shadow-[0_2px_10px_rgba(0,0,0,0.01)] translate-y-[-6px]"
+                  /* Responsive sizing: compact on mobile, full size on desktop */
+                  className="object-contain w-[180px] sm:w-[220px] md:w-[250px] h-auto filter drop-shadow-[0_2px_10px_rgba(0,0,0,0.01)] translate-y-[-4px] sm:translate-y-[-6px]"
                 />
               </motion.div>
             </div>
 
-            {/* Premium New Staggered Signature Tagline Display */}
+            {/* Tagline Display */}
             <motion.p
               variants={taglineVariants}
               initial="hidden"
               animate="show"
-              className="font-body text-[9px] sm:text-[10px] font-bold tracking-[0.26em] uppercase text-neutral-400 max-w-xs leading-relaxed"
+              className="font-body text-[9px] sm:text-[10px] font-bold tracking-[0.22em] sm:tracking-[0.26em] uppercase text-neutral-400 max-w-xs leading-relaxed px-2"
             >
               Most Trusted <br />
               <span className="text-[#006fe3] mt-1 inline-block">Deep Cleaning Service</span>
@@ -178,9 +179,8 @@ export default function Preloader() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.5 }}
-              className="flex flex-col items-center space-y-4 w-44 pt-4"
+              className="flex flex-col items-center space-y-3 sm:space-y-4 w-40 sm:w-44 pt-2 sm:pt-4"
             >
-              {/* Connected Explicit Target Animation Layout Line */}
               <div className="w-full h-[1.5px] bg-neutral-100 rounded-full overflow-hidden relative">
                 <motion.div 
                   className="h-full bg-[#006fe3] absolute left-0 top-0"
@@ -190,7 +190,6 @@ export default function Preloader() {
                 />
               </div>
 
-              {/* Monospace Fractional Counter Parameter Matrix */}
               <div className="font-mono text-[9px] font-bold tracking-widest text-neutral-400 uppercase flex items-center gap-1">
                 <span>SYS_LOAD</span>
                 <span className="text-neutral-800 font-extrabold ml-1 min-w-[24px] text-right">
