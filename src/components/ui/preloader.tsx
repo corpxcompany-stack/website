@@ -92,20 +92,21 @@ export default function Preloader() {
           {/* 1. LAYER ONE: TECHNICAL GRID MESH BACKDROP */}
           <div className="preloader-mesh-matrix" />
 
-          {/* 2. LAYER TWO: FLUID VECTOR DOODLE SCHEMATIC */}
+          {/* 2. LAYER TWO: LARGER FLUID VECTOR CIRCLE SCHEMATIC */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-2 overflow-hidden">
             <svg 
               width="600" 
               height="600" 
               viewBox="0 0 600 600" 
               fill="none" 
-              /* Fluid scaling: scales nicely across mobile, tablet, and desktop without clipping */
-              className="w-[85vw] h-[85vw] sm:w-[70vw] sm:h-[70vw] max-w-[500px] max-h-[500px]"
+              /* Increased width/height ratio on mobile so the circle feels bigger and more expansive */
+              className="w-[95vw] h-[95vw] sm:w-[70vw] sm:h-[70vw] max-w-[550px] max-h-[550px]"
             >
               <motion.circle 
                 cx="300" 
                 cy="300" 
-                r="180" 
+                /* Increased radius from 180 to 220 for mobile view expansion */
+                r="220" 
                 stroke="#ffa500" 
                 strokeWidth="1" 
                 strokeDasharray="4 8"
@@ -116,7 +117,7 @@ export default function Preloader() {
                 variants={doodleVariants}
                 initial="hidden"
                 animate="show"
-                d="M300 40 L300 560 M40 300 L560 300" 
+                d="M300 30 L300 570 M30 300 L570 300" 
                 stroke="rgba(0,111,227,0.3)" 
                 strokeWidth="0.75" 
               />
@@ -124,7 +125,7 @@ export default function Preloader() {
                 variants={doodleVariants}
                 initial="hidden"
                 animate="show"
-                d="M180 180 L420 420 M420 180 L180 420"
+                d="M140 140 L460 460 M460 140 L140 460"
                 stroke="rgba(0,111,227,0.15)"
                 strokeWidth="0.5"
               />
@@ -157,8 +158,8 @@ export default function Preloader() {
                   width={250}
                   height={100}
                   priority
-                  /* Responsive sizing: compact on mobile, full size on desktop */
-                  className="object-contain w-[180px] sm:w-[220px] md:w-[250px] h-auto filter drop-shadow-[0_2px_10px_rgba(0,0,0,0.01)] translate-y-[-4px] sm:translate-y-[-6px]"
+                  /* Decreased mobile logo width from 180px to 150px for a sleeker balance */
+                  className="object-contain w-[150px] sm:w-[210px] md:w-[250px] h-auto filter drop-shadow-[0_2px_10px_rgba(0,0,0,0.01)] translate-y-[-4px] sm:translate-y-[-6px]"
                 />
               </motion.div>
             </div>
