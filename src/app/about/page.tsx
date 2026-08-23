@@ -160,7 +160,7 @@ export default function AboutPage() {
                ========================================== */}
             <div className="relative w-full aspect-[16/10] rounded-2xl overflow-hidden bg-neutral-100 border border-neutral-200/70 shadow-[0_20px_50px_-30px_rgba(0,0,0,0.25)]">
               <Image
-                src="/about/team.avif"
+                src="/gallery/team.avif"
                 alt="The CorpX cleaning team on site"
                 fill
                 sizes="(max-width: 1024px) 100vw, 800px"

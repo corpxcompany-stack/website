@@ -162,7 +162,8 @@ export default function Navbar() {
         className="md:hidden fixed bottom-0 w-full z-50 bottom-dock-blur border-t border-black/[0.04] rounded-t-3xl shadow-[0_-12px_40px_-20px_rgba(0,111,227,0.12)] px-3 pt-3"
       >
         <div className="flex justify-around items-center relative">
-          {navLinks.filter(link => !["About Us", "FAQs"].includes(link.name)).map((link) => {
+          {/* Changed the filter below to only exclude FAQs, allowing About Us to show */}
+          {navLinks.filter(link => !["FAQs"].includes(link.name)).map((link) => {
             const isSelected = checkIsActive(link.href);
             
             return (
